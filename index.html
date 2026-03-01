@@ -722,7 +722,7 @@ input:checked + .tog-sl::before{transform:translateX(20px);}
           </div>
           <div>
             <label class="a-label">OpenWeather API Key</label>
-            <input class="a-input" id="cfg-owm" type="text" placeholder="39dd5cc7d7834a0d2ada2da6828084b2">
+            <input class="a-input" id="cfg-owm" type="text" placeholder="YOUR_OWM_KEY">
           </div>
         </div>
         <div style="border-top:1px solid #e2e8f0;padding-top:14px;margin-top:4px;">
@@ -956,12 +956,9 @@ input:checked + .tog-sl::before{transform:translateX(20px);}
   <div id="pg-kcc" class="page">
 
     <!-- AI Status Bar -->
-    <div id="ai-status-bar" style="background:var(--g8);border:1px solid var(--bdr);border-radius:11px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;">
-        <div id="ai-dot" style="width:8px;height:8px;border-radius:50%;background:var(--t4);flex-shrink:0;"></div>
-        <span id="ai-status-txt" style="color:var(--t3);">Gemini AI: API Key नहीं मिली — Offline Mode</span>
-      </div>
-      <button onclick="openAiSetup()" style="font-size:11px;font-weight:700;color:var(--g3);background:none;border:1px solid var(--bdr);border-radius:6px;padding:4px 9px;cursor:pointer;">⚙️ Setup</button>
+    <div id="ai-status-bar" style="background:var(--g8);border:1px solid var(--bdr);border-radius:11px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:8px;">
+      <div id="ai-dot" style="width:8px;height:8px;border-radius:50%;background:var(--t4);flex-shrink:0;"></div>
+      <span id="ai-status-txt" style="font-size:12.5px;color:var(--t3);">Gemini AI: Loading...</span>
     </div>
 
     <!-- Gemini Setup Guide (hidden by default) -->
@@ -1151,6 +1148,12 @@ input:checked + .tog-sl::before{transform:translateX(20px);}
 'use strict';
 
 /* ============================================================
+   🔑 GEMINI AI KEY — यहाँ अपनी key डालें
+   aistudio.google.com से free key मिलेगी
+   ============================================================ */
+const GEMINI_API_KEY = 'AIzaSyD9PTgUjBIrpCOk8k0bcUZKPz0JIDW6_Uc'; // ← यहाँ key paste करें: 'AIzaSy...'
+
+/* ============================================================
    APP DATA
    ============================================================ */
 const MANDI_DATA = {
@@ -1248,6 +1251,11 @@ function offlineAnswer(query) {
 }
 
 /* --- GEMINI AI --- */
+function isGeminiReady(){
+  const hardcoded = (typeof GEMINI_API_KEY !== 'undefined' && GEMINI_API_KEY && GEMINI_API_KEY.startsWith('AIza'));
+  const saved = !!(DB.cfg().geminiKey && DB.cfg().geminiKey.startsWith('AIza'));
+  return hardcoded || saved;
+}
 const GEMINI_SYSTEM = `तुम एक expert Indian agricultural assistant हो — "किसान AI सहायक"।
 तुम्हारी expertise: भारतीय खेती, फसल रोग, खाद-उर्वरक, सिंचाई, MSP, PMFBY, PM Kisan, मंडी भाव।
 हमेशा हिंदी में जवाब दो। जवाब practical, concise (4-6 lines), और actionable हो।
@@ -1255,8 +1263,11 @@ Helpline: KCC 1800-180-1551 ज़रूरत पर mention करो।
 किसान की भाषा में बात करो — technical शब्द कम, सरल हिंदी ज़्यादा।`;
 
 async function geminiAnswer(query) {
-  const key = DB.cfg().geminiKey;
-  if (!key) return null;
+  // Priority: hardcoded constant → Admin saved key
+  const key = (typeof GEMINI_API_KEY !== 'undefined' && GEMINI_API_KEY && GEMINI_API_KEY.startsWith('AIza'))
+    ? GEMINI_API_KEY
+    : (DB.cfg().geminiKey || '');
+  if (!key || !key.startsWith('AIza')) return null;
   try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
@@ -1301,6 +1312,7 @@ function saveGeminiKey() {
 }
 
 function updateAiStatus(hasKey) {
+  hasKey = hasKey || isGeminiReady();
   const dot = document.getElementById('ai-dot');
   const txt = document.getElementById('ai-status-txt');
   const badge = document.getElementById('chat-mode-badge');
@@ -1409,25 +1421,70 @@ function getLocation(){
 }
 async function fetchWeather(lat,lon){
   const cfg=DB.cfg();
-  const key=cfg.owm||'YOUR_OWM_KEY';
+  // Priority: Admin settings > hardcoded key
+  const key = cfg.owm && cfg.owm !== 'YOUR_OWM_KEY' ? cfg.owm : 'REPLACE_YOUR_OWM_KEY_HERE';
+  if(!key || key.includes('REPLACE')){
+    // No key — use Open-Meteo (completely free, no key needed)
+    await fetchWeatherFree(lat, lon);
+    return;
+  }
   try{
     const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric&lang=hi`);
-    if(!r.ok)throw 0;
+    if(!r.ok)throw new Error('OWM '+r.status);
     const d=await r.json();
-    document.getElementById('w-temp').textContent=Math.round(d.main.temp);
-    document.getElementById('w-humid').textContent=d.main.humidity+'%';
-    document.getElementById('w-wind').textContent=Math.round(d.wind.speed*3.6)+'km/h';
-    document.getElementById('w-feel').textContent=Math.round(d.main.feels_like)+'°';
-    document.getElementById('w-rain').textContent=(d.rain?d.rain['1h']||0:0)+'mm';
-    document.getElementById('w-city').textContent=d.name||'';
-    document.getElementById('w-cond').textContent=d.weather[0]?.description||'';
-    document.getElementById('loc-name').textContent=d.name||'आपका शहर';
-    document.getElementById('loc-state').textContent=d.sys?.country||'';
-    const ic={Clear:'☀️',Clouds:'⛅',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Haze:'🌫️'};
-    document.getElementById('w-icon').textContent=ic[d.weather[0]?.main]||'🌤️';
-    const al={Rain:'⚠️ बारिश संभावना — सिंचाई रोकें',Thunderstorm:'⚠️ गरज-चमक — खेत में न जाएँ',Clear:'✅ मौसम साफ — खेती के लिए अनुकूल',Clouds:'ℹ️ बादल छाए — spray का अच्छा समय'};
-    document.getElementById('w-alert').innerHTML=al[d.weather[0]?.main]||'🌾 मौसम सामान्य — खेती का काम जारी रखें';
-  }catch{setDefaultWeather();}
+    applyWeatherData(d.main.temp, d.main.humidity, d.wind.speed*3.6, d.main.feels_like,
+      d.rain?d.rain['1h']||0:0, d.name||'', d.weather[0]?.description||'', d.weather[0]?.main||'', d.sys?.country||'');
+  }catch(e){
+    console.warn('OWM failed:',e.message,'— trying free API');
+    await fetchWeatherFree(lat, lon);
+  }
+}
+
+async function fetchWeatherFree(lat, lon){
+  // Open-Meteo: completely free, no API key needed
+  try{
+    const geoR = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=hi`);
+    const geo = await geoR.json();
+    const city = geo.address?.city || geo.address?.town || geo.address?.village || geo.address?.county || 'आपका शहर';
+    const state = geo.address?.state || '';
+
+    const wR = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,weather_code&wind_speed_unit=kmh`);
+    const w = await wR.json();
+    const c = w.current;
+    const wCode = c.weather_code || 0;
+    // WMO weather code → condition
+    let cond='सामान्य', mainCond='Clear';
+    if(wCode===0){cond='धूप';mainCond='Clear';}
+    else if(wCode<=2){cond='आंशिक बादल';mainCond='Clouds';}
+    else if(wCode<=3){cond='बादल';mainCond='Clouds';}
+    else if(wCode<=48){cond='कोहरा';mainCond='Mist';}
+    else if(wCode<=57){cond='बूँदाबाँदी';mainCond='Drizzle';}
+    else if(wCode<=67){cond='बारिश';mainCond='Rain';}
+    else if(wCode<=77){cond='बर्फ';mainCond='Snow';}
+    else if(wCode<=82){cond='बारिश';mainCond='Rain';}
+    else if(wCode<=99){cond='आँधी-बारिश';mainCond='Thunderstorm';}
+    applyWeatherData(c.temperature_2m, c.relative_humidity_2m, c.wind_speed_10m,
+      c.apparent_temperature, c.precipitation||0, city, cond, mainCond, state);
+  }catch(e2){
+    console.warn('Free weather also failed:',e2);
+    setDefaultWeather();
+  }
+}
+
+function applyWeatherData(temp, humid, wind, feel, rain, city, cond, mainCond, country){
+  document.getElementById('w-temp').textContent=Math.round(temp);
+  document.getElementById('w-humid').textContent=Math.round(humid)+'%';
+  document.getElementById('w-wind').textContent=Math.round(wind)+'km/h';
+  document.getElementById('w-feel').textContent=Math.round(feel)+'°';
+  document.getElementById('w-rain').textContent=rain+'mm';
+  document.getElementById('w-city').textContent=city;
+  document.getElementById('w-cond').textContent=cond;
+  document.getElementById('loc-name').textContent=city;
+  document.getElementById('loc-state').textContent=country||'';
+  const ic={Clear:'☀️',Clouds:'⛅',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Haze:'🌫️'};
+  document.getElementById('w-icon').textContent=ic[mainCond]||'🌤️';
+  const al={Rain:'⚠️ बारिश — सिंचाई रोकें, फसल बचाएँ',Thunderstorm:'⚠️ गरज-चमक — खेत में न जाएँ',Clear:'✅ मौसम साफ — खेती के लिए अनुकूल',Clouds:'ℹ️ बादल — spray का अच्छा समय',Snow:'❄️ ठंड — पाले से फसल बचाएँ'};
+  document.getElementById('w-alert').innerHTML=al[mainCond]||'🌾 मौसम सामान्य — खेती का काम जारी रखें';
 }
 function setDefaultWeather(){
   document.getElementById('w-temp').textContent='29';document.getElementById('w-humid').textContent='68%';
@@ -1485,14 +1542,14 @@ const QUICK_CHIPS = [
 function initChat(){
   const box=document.getElementById('chat-box');
   box.innerHTML='';
-  const hasKey = !!DB.cfg().geminiKey;
+  const hasKey = isGeminiReady();
   updateAiStatus(hasKey);
   initVoice();
   addMsg('bot',
     `🙏 <b>नमस्ते किसान भाई!</b><br><br>` +
     (hasKey
       ? `🤖 <b>Gemini AI Active</b> — हर सवाल का real-time जवाब मिलेगा।`
-      : `📚 <b>200+ कृषि Q&A</b> तैयार हैं — offline भी काम करेगा।<br><small style="color:var(--t4)">⚙️ Setup से Gemini AI connect करें — और भी smart जवाब</small>`) +
+      : `📚 <b>200+ कृषि सवालों के जवाब</b> offline तैयार हैं।`) +
     `<br><br>हिंदी में सवाल पूछें! 🌾`
   );
   document.getElementById('qchips').innerHTML=QUICK_CHIPS.map(q=>`<button class="qchip" onclick="quickAsk('${q}')">${q}</button>`).join('');
@@ -1529,7 +1586,7 @@ async function sendChat() {
   const q = inp.value.trim(); if(!q) return;
   addMsg('u', q); inp.value='';
 
-  const hasKey = !!DB.cfg().geminiKey;
+  const hasKey = isGeminiReady();
 
   if (hasKey) {
     // GEMINI AI MODE
@@ -1668,6 +1725,7 @@ function openPost(id){
   const posts=getAllPosts();
   postCache=posts;
   const p=posts.find(x=>x.id===id);if(!p)return;
+  pushHistory({type:'post',id});
   const cat=p.cat||p.category||'news';
   const cc=CAT_CFG[cat]||CAT_CFG.news;
   const content=p.content||p.body||'';
@@ -1682,15 +1740,47 @@ function openPost(id){
   document.body.style.overflow='hidden';
 }
 function closePost(){
-  const pv=document.getElementById('post-view');pv.classList.remove('open');
+  const pv=document.getElementById('post-view');
+  pv.classList.remove('open');
   setTimeout(()=>{pv.style.display='none';},250);
   document.body.style.overflow='';
 }
+function closePolicyAll(){
+  document.querySelectorAll('.policy-overlay').forEach(p=>p.classList.remove('open'));
+  document.body.style.overflow='';
+}
+// Android back button support
+function pushHistory(state){
+  history.pushState(state,'','');
+}
+window.addEventListener('popstate', function(e){
+  const pv=document.getElementById('post-view');
+  const adminLogin=document.getElementById('admin-login');
+  const adminScreen=document.getElementById('admin-screen');
+  const setupCard=document.getElementById('ai-setup-card');
+  // Close whatever is open on back press
+  if(setupCard && setupCard.style.display!=='none'){
+    closeAiSetup(); return;
+  }
+  if(pv && pv.style.display!=='none'){
+    closePost(); return;
+  }
+  if(document.querySelector('.policy-overlay.open')){
+    closePolicyAll(); return;
+  }
+  if(adminLogin && adminLogin.style.display!=='none'){
+    adminLogin.style.display='none'; return;
+  }
+  if(adminScreen && adminScreen.style.display==='block'){
+    closeAdmin(); return;
+  }
+  // Nothing open — let browser handle (exit or go back)
+});
 
 /* ============================================================
    POLICY PAGES
    ============================================================ */
-function openPol(name){document.getElementById('pol-'+name).classList.add('open');document.body.style.overflow='hidden';}
+function openPol(name){document.getElementById('pol-'+name).classList.add('open');document.body.style.overflow='hidden';pushHistory({type:'policy',name});}
 function closePol(name){document.getElementById('pol-'+name).classList.remove('open');document.body.style.overflow='';}
 
 /* ============================================================
@@ -1698,6 +1788,7 @@ function closePol(name){document.getElementById('pol-'+name).classList.remove('o
    ============================================================ */
 function openAdminLogin(){
   document.getElementById('admin-login').style.display='flex';
+  pushHistory({type:'adminLogin'});
 }
 function doLogin(){
   const u=document.getElementById('l-user').value;

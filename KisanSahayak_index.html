@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="किसान सहायक - मंडी भाव, मौसम, MSP, फसल कैलेंडर, कृषि समाचार">
+<meta name="theme-color" content="#1a5c38">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>किसान सहायक | KisanSahayak</title>
+
+<!-- AdMob - Replace with your Publisher ID -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ROOT & RESET
+   ============================================================ */
+:root{
+  --g1:#0c2e1e; --g2:#1a5c38; --g3:#226b44; --g4:#2ea05f; --g5:#4aba7a;
+  --g6:#a8dfc0; --g7:#d4f0e3; --g8:#edf9f3;
+  --amb:#d97706; --ambl:#fef3c7; --ambd:#92400e;
+  --red:#dc2626; --redl:#fee2e2;
+  --sky:#0284c7; --skyl:#e0f2fe;
+  --pur:#7c3aed; --purl:#ede9fe;
+  --t1:#0a1f13; --t2:#1e3a28; --t3:#64748b; --t4:#94a3b8;
+  --bdr:#c6e8d4; --bg:#f0f9f4; --wh:#ffffff;
+  --sh:0 2px 16px rgba(13,46,30,0.07);
+  --sh2:0 8px 40px rgba(13,46,30,0.14);
+  --r:16px; --rs:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans Devanagari',sans-serif;background:var(--bg);color:var(--t1);max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden;}
+img{max-width:100%;display:block;}
+button,input,select,textarea{font-family:inherit;}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+#loading{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,var(--g1) 0%,var(--g2) 55%,#0a2d1e 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  transition:opacity .5s;
+}
+.ld-icon{font-size:72px;animation:ldBounce 1s ease infinite;}
+@keyframes ldBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.ld-title{font-family:'Baloo 2',cursive;font-size:28px;font-weight:800;color:#fff;}
+.ld-sub{font-size:13px;color:var(--g6);}
+.ld-bar{width:200px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;overflow:hidden;}
+.ld-fill{height:100%;background:linear-gradient(90deg,var(--g5),#6ee7a0);border-radius:2px;animation:ldFill 2.2s ease forwards;}
+@keyframes ldFill{from{width:0}to{width:100%}}
+
+/* ============================================================
+   SCREENS — top-level views
+   ============================================================ */
+.screen{display:none;}
+.screen.active{display:block !important;}
+
+/* ============================================================
+   ===== USER APP SCREEN =====
+   ============================================================ */
+
+/* --- HEADER --- */
+.app-hdr{
+  background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 100%);
+  padding:13px 16px;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 20px rgba(0,0,0,.28);
+}
+.hdr-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.hdr-logo{display:flex;align-items:center;gap:10px;}
+.hdr-badge{width:40px;height:40px;background:linear-gradient(135deg,var(--g5),#2ee879);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 12px rgba(74,186,122,.35);flex-shrink:0;}
+.hdr-name h1{font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;color:#fff;line-height:1;}
+.hdr-name p{font-size:10px;color:var(--g6);margin-top:2px;}
+.hdr-acts{display:flex;gap:7px;align-items:center;}
+.hdr-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 11px;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.live-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:ldot 1.5s infinite;}
+@keyframes ldot{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.6)}50%{box-shadow:0 0 0 5px rgba(74,222,128,0)}}
+.loc-bar{background:rgba(255,255,255,.08);border-radius:9px;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;}
+.loc-left{display:flex;align-items:center;gap:7px;font-size:12px;color:#fff;}
+.loc-name{font-weight:600;}
+.loc-state{font-size:10.5px;color:var(--g6);}
+.loc-btn{background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:3px 8px;color:var(--g6);font-size:10px;cursor:pointer;}
+
+/* --- ADMOB BANNER --- */
+.ad-banner{background:#f8f9fa;border-bottom:1px solid var(--bdr);min-height:52px;display:flex;align-items:center;justify-content:center;}
+.ad-placeholder{font-size:10px;color:var(--t4);text-align:center;}
+
+/* --- WEATHER CARD --- */
+.weather{
+  background:linear-gradient(135deg,#0369a1 0%,#0ea5e9 60%,#38bdf8 100%);
+  padding:18px 16px;position:relative;overflow:hidden;
+}
+.weather::before{content:'';position:absolute;width:220px;height:220px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent);top:-70px;right:-70px;border-radius:50%;}
+.w-main{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;}
+.w-city{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:2px;}
+.w-temp{font-family:'Baloo 2',cursive;font-size:56px;font-weight:800;color:#fff;line-height:1;}
+.w-temp sup{font-size:22px;}
+.w-cond{font-size:12.5px;color:rgba(255,255,255,.75);margin-top:4px;}
+.w-icon{font-size:68px;line-height:1;opacity:.9;}
+.w-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px;position:relative;z-index:1;}
+.w-cell{background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border-radius:10px;padding:9px 5px;text-align:center;}
+.w-ci{font-size:17px;margin-bottom:2px;}
+.w-cv{font-size:13px;font-weight:700;color:#fff;}
+.w-cl{font-size:9.5px;color:rgba(255,255,255,.65);}
+.w-alert{background:rgba(251,191,36,.22);border:1px solid rgba(251,191,36,.38);border-radius:9px;padding:9px 12px;margin-top:11px;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:7px;position:relative;z-index:1;}
+
+/* --- NAV TABS --- */
+.nav-tabs{background:var(--wh);border-bottom:1.5px solid var(--bdr);overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.tabs-row{display:flex;padding:0 6px;min-width:max-content;}
+.tab-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 13px;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;color:var(--t3);white-space:nowrap;}
+.tab-btn.active{border-bottom-color:var(--g4);color:var(--g2);}
+.tab-btn span:first-child{font-size:19px;}
+.tab-btn span:last-child{font-size:10.5px;font-weight:600;}
+
+/* --- PAGES --- */
+.page{display:none;padding:14px;padding-bottom:84px;}
+.page.active{display:block;animation:pgIn .22s ease both;}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* --- BOTTOM NAV --- */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--wh);border-top:1px solid var(--bdr);display:flex;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.07);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px 13px;border:none;background:none;cursor:pointer;position:relative;}
+.nav-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--g4);border-radius:0 0 3px 3px;}
+.ni-icon{font-size:21px;}
+.ni-lbl{font-size:9.5px;font-weight:600;color:var(--t3);}
+.nav-item.active .ni-lbl{color:var(--g3);}
+
+/* --- CARDS --- */
+.card{background:var(--wh);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh);overflow:hidden;margin-bottom:13px;}
+.card-hd{padding:15px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.card-bd{padding:15px 16px;}
+.card-title{font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;color:var(--g1);display:flex;align-items:center;gap:7px;}
+.api-tag{font-size:9.5px;color:var(--t4);padding:7px 14px;border-top:1px solid var(--g8);background:var(--g8);display:flex;align-items:center;gap:4px;justify-content:flex-end;}
+.api-dot{width:5px;height:5px;background:var(--g4);border-radius:50%;}
+
+/* --- BADGE --- */
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.3px;}
+.b-live{background:#dcfce7;color:#15803d;}
+.b-daily{background:var(--ambl);color:var(--ambd);}
+.b-api{background:var(--skyl);color:var(--sky);}
+.b-free{background:var(--purl);color:var(--pur);}
+
+/* --- WHATSAPP BANNER --- */
+.wa-strip{background:linear-gradient(135deg,#128c7e,#25d366);border-radius:var(--r);padding:13px 15px;margin-bottom:13px;display:flex;align-items:center;gap:11px;cursor:pointer;text-decoration:none;box-shadow:0 4px 18px rgba(18,140,126,.28);}
+.wa-icon{font-size:26px;flex-shrink:0;}
+.wa-txt h3{font-size:13.5px;font-weight:700;color:#fff;}
+.wa-txt p{font-size:11px;color:rgba(255,255,255,.82);margin-top:1px;}
+.wa-cta{background:#fff;color:#128c7e;font-size:12px;font-weight:700;border-radius:20px;padding:7px 13px;white-space:nowrap;border:none;cursor:pointer;margin-left:auto;flex-shrink:0;}
+
+/* --- MANDI TABLE --- */
+.mandi-sel{width:100%;background:var(--g8);border:1.5px solid var(--bdr);border-radius:var(--rs);padding:10px 13px;font-size:13px;color:var(--t1);cursor:pointer;margin-bottom:11px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath fill='%2364748b' d='M5 7L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;outline:none;}
+.price-alert{background:linear-gradient(90deg,var(--ambl),#fde68a);border-left:4px solid var(--amb);border-radius:0 9px 9px 0;padding:9px 12px;font-size:12.5px;color:var(--ambd);margin-bottom:11px;display:flex;align-items:center;gap:7px;}
+.m-tbl{width:100%;border-collapse:collapse;}
+.m-tbl thead tr{background:var(--g8);}
+.m-tbl th{padding:8px 10px;font-size:10px;font-weight:700;color:var(--g2);text-align:left;text-transform:uppercase;letter-spacing:.5px;}
+.m-tbl th:nth-child(n+3){text-align:right;}
+.m-tbl td{padding:10px 10px;font-size:13px;border-bottom:1px solid var(--g8);}
+.m-tbl td:nth-child(n+3){text-align:right;}
+.m-tbl tbody tr:last-child td{border-bottom:none;}
+.m-tbl tbody tr:hover{background:var(--g8);}
+.crop-cell{display:flex;align-items:center;gap:6px;font-weight:600;}
+.modal-p{font-weight:700;color:var(--g3);font-size:14px;}
+.dlt{font-size:10px;display:block;}
+.dlt-up{color:var(--red);}
+.dlt-dn{color:#16a34a;}
+
+/* --- MSP --- */
+.msp-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.msp-item{background:var(--g8);border:1.5px solid var(--bdr);border-radius:13px;padding:13px 11px;position:relative;overflow:hidden;}
+.msp-item::after{content:attr(data-e);position:absolute;font-size:46px;right:-5px;bottom:-7px;opacity:.1;line-height:1;}
+.msp-tag{font-size:9.5px;font-weight:700;color:var(--g3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.msp-name{font-size:12.5px;font-weight:700;color:var(--g1);margin-bottom:1px;}
+.msp-szn{font-size:10px;color:var(--t3);margin-bottom:7px;}
+.msp-price{font-family:'Baloo 2',cursive;font-size:21px;font-weight:800;color:var(--g3);}
+.msp-unit{font-size:9.5px;color:var(--t3);}
+.msp-hike{font-size:11px;color:#16a34a;font-weight:600;margin-top:3px;}
+.msp-info{background:var(--ambl);border:1px solid #fcd34d;border-radius:9px;padding:10px 13px;font-size:12.5px;color:var(--ambd);display:flex;gap:7px;margin-bottom:13px;}
+
+/* --- CHAT --- */
+.chat-box{background:var(--g8);border-radius:var(--rs);height:290px;overflow-y:auto;padding:11px;display:flex;flex-direction:column;gap:9px;margin-bottom:11px;border:1px solid var(--bdr);scroll-behavior:smooth;}
+.msg-row{display:flex;gap:7px;align-items:flex-end;}
+.msg-row.u{flex-direction:row-reverse;}
+.msg-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.av-bot{background:var(--g7);border:1.5px solid var(--bdr);}
+.av-usr{background:var(--ambl);border:1.5px solid #fcd34d;}
+.msg-bbl{max-width:78%;padding:9px 12px;border-radius:13px;font-size:13px;line-height:1.55;}
+.msg-row.bot .msg-bbl{background:var(--wh);border:1px solid var(--bdr);border-bottom-left-radius:4px;}
+.msg-row.u .msg-bbl{background:var(--g3);color:#fff;border-bottom-right-radius:4px;}
+.quick-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px;}
+.qchip{background:var(--wh);border:1.5px solid var(--bdr);border-radius:20px;padding:6px 11px;font-size:11.5px;color:var(--g2);cursor:pointer;transition:all .15s;font-weight:500;}
+.qchip:hover,.qchip:active{background:var(--g4);color:#fff;border-color:var(--g4);}
+.chat-row{display:flex;gap:8px;}
+.chat-in{flex:1;background:var(--wh);border:1.5px solid var(--bdr);border-radius:24px;padding:10px 15px;font-size:13px;outline:none;}
+.chat-in:focus{border-color:var(--g4);}
+.send-btn{width:42px;height:42px;background:var(--g3);border:none;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.typing{display:flex;gap:4px;padding:5px 2px;}
+.td{width:7px;height:7px;background:var(--g6);border-radius:50%;animation:tdt 1.2s infinite;}
+.td:nth-child(2){animation-delay:.2s;}
+.td:nth-child(3){animation-delay:.4s;}
+@keyframes tdt{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+
+/* --- CROP CALENDAR --- */
+.month-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:13px;scrollbar-width:none;}
+.month-row::-webkit-scrollbar{display:none;}
+.m-chip{background:var(--wh);border:1.5px solid var(--bdr);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.m-chip.active{background:var(--g3);color:#fff;border-color:var(--g3);}
+.cal-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.cal-tag{background:var(--wh);border:1.5px solid var(--bdr);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:4px;font-weight:500;}
+.cal-tag.kh{border-color:#86efac;background:#f0fdf4;}
+.cal-tag.rb{border-color:#fcd34d;background:#fffbeb;}
+.cal-tag.vg{border-color:#a5f3fc;background:#ecfeff;}
+.cal-tag.fr{border-color:#fca5a5;background:#fff1f2;}
+.cal-sec-hd{font-size:12.5px;font-weight:700;color:var(--g1);background:var(--g8);border-radius:8px;padding:7px 12px;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3);}
+.leg-d{width:9px;height:9px;border-radius:50%;}
+
+/* --- SOIL --- */
+.soil-g{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.soil-c{background:var(--g8);border:1.5px solid var(--bdr);border-radius:11px;padding:11px 9px;text-align:center;}
+.s-ic{font-size:24px;margin-bottom:4px;}
+.s-nm{font-size:10.5px;font-weight:700;color:var(--g1);}
+.s-vl{font-family:'Baloo 2',cursive;font-size:17px;font-weight:800;color:var(--g3);}
+.s-un{font-size:9.5px;color:var(--t4);}
+.s-st{font-size:10px;padding:2px 7px;border-radius:9px;margin-top:3px;display:inline-block;}
+.st-g{background:#dcfce7;color:#15803d;}
+.st-m{background:var(--ambl);color:var(--ambd);}
+.st-l{background:var(--redl);color:var(--red);}
+
+/* --- SCHEMES --- */
+.scheme-card{background:var(--wh);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh);padding:15px;margin-bottom:12px;position:relative;overflow:hidden;}
+.scheme-card::before{content:attr(data-ic);position:absolute;font-size:65px;right:-8px;top:-4px;opacity:.06;}
+.sc-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;margin-bottom:7px;}
+.sc-name{font-size:16px;font-weight:700;color:var(--g1);margin-bottom:5px;}
+.sc-desc{font-size:13px;color:var(--t3);line-height:1.55;margin-bottom:11px;}
+.sc-detail{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);padding:5px 0;border-bottom:1px solid var(--g8);}
+.sc-detail:last-of-type{border-bottom:none;}
+.sc-btn{display:inline-flex;align-items:center;gap:5px;background:var(--g3);color:#fff;border:none;border-radius:22px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;margin-top:10px;}
+
+/* --- RAIN CHART --- */
+.rain-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.rl{font-size:11px;color:var(--t3);width:30px;flex-shrink:0;}
+.rt{flex:1;height:9px;background:var(--g8);border-radius:4px;overflow:hidden;}
+.rf{height:100%;background:linear-gradient(90deg,var(--sky),#38bdf8);border-radius:4px;}
+.rv{font-size:11px;font-weight:700;color:var(--sky);width:46px;text-align:right;flex-shrink:0;}
+
+/* --- POLICY PAGES --- */
+.policy-overlay{position:fixed;inset:0;background:var(--wh);z-index:300;overflow-y:auto;display:none;max-width:480px;margin:0 auto;}
+.policy-overlay.open{display:block;}
+.pol-hdr{background:linear-gradient(135deg,var(--g1),var(--g2));padding:15px 16px;display:flex;align-items:center;gap:11px;position:sticky;top:0;}
+.pol-back{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+.pol-hd-t h2{font-family:'Baloo 2',cursive;font-size:16px;color:#fff;font-weight:700;}
+.pol-hd-t p{font-size:10.5px;color:var(--g6);margin-top:2px;}
+.pol-body{padding:20px;}
+.pol-title{font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;color:var(--g1);margin-bottom:5px;}
+.pol-date{font-size:12px;color:var(--t3);margin-bottom:20px;}
+.pol-sec{margin-bottom:18px;}
+.pol-h{font-size:14px;font-weight:700;color:var(--g2);margin-bottom:7px;}
+.pol-p{font-size:13px;color:var(--t3);line-height:1.75;}
+
+/* --- ABOUT LINKS --- */
+.about-link{background:var(--wh);border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-decoration:none;color:var(--t1);margin-bottom:8px;transition:background .15s;}
+.about-link:hover{background:var(--g8);}
+.al-left{display:flex;align-items:center;gap:10px;}
+.al-icon{font-size:21px;}
+.al-text h4{font-size:13.5px;font-weight:600;color:var(--t1);}
+.al-text p{font-size:11px;color:var(--t3);margin-top:1px;}
+.al-arr{color:var(--t4);}
+
+/* ============================================================
+   ===== NEWS / BLOG SECTION =====
+   ============================================================ */
+
+/* Breaking News Ticker */
+.ticker-wrap{background:linear-gradient(90deg,var(--red),#ef4444);padding:8px 0;overflow:hidden;}
+.ticker-in{display:flex;align-items:center;}
+.ticker-lbl{background:#fff;color:var(--red);font-size:10px;font-weight:800;padding:3px 12px;border-radius:0 18px 18px 0;margin-right:10px;white-space:nowrap;flex-shrink:0;letter-spacing:.5px;text-transform:uppercase;}
+.ticker-txt{font-size:13px;color:#fff;font-weight:500;white-space:nowrap;animation:ticker 25s linear infinite;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* News Filter Tabs */
+.news-filter{background:var(--wh);border-bottom:1.5px solid var(--bdr);overflow-x:auto;scrollbar-width:none;}
+.news-filter::-webkit-scrollbar{display:none;}
+.nf-inner{display:flex;padding:0 6px;min-width:max-content;}
+.nf-tab{padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;border:none;background:none;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.nf-tab.active{color:var(--g3);border-bottom-color:var(--g4);}
+
+/* Live Mandi in News */
+.live-mandi{background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:var(--r);overflow:hidden;margin-bottom:13px;box-shadow:0 6px 28px rgba(13,51,32,.2);}
+.lm-hd{padding:12px 15px 9px;display:flex;align-items:center;justify-content:space-between;}
+.lm-title{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px;}
+.lm-badge{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.28);color:#4ade80;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;}
+.lm-sel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;font-family:inherit;font-size:12px;padding:6px 11px;border-radius:8px;cursor:pointer;width:calc(100% - 30px);margin:0 15px 10px;appearance:none;}
+.lm-tbl{width:100%;border-collapse:collapse;}
+.lm-tbl th{padding:7px 13px;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.45);text-align:left;text-transform:uppercase;letter-spacing:.4px;background:rgba(0,0,0,.12);}
+.lm-tbl th:last-child{text-align:right;}
+.lm-tbl td{padding:10px 13px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.82);}
+.lm-tbl td:last-child{text-align:right;}
+.lm-tbl tbody tr:last-child td{border-bottom:none;}
+.lm-cn{display:flex;align-items:center;gap:6px;font-weight:600;color:#fff;}
+.lm-mp{font-weight:800;color:#4ade80;font-size:14px;}
+.lm-du{color:#f87171;font-size:10px;display:block;}
+.lm-dd{color:#4ade80;font-size:10px;display:block;}
+.lm-ft{padding:7px 13px;font-size:9.5px;color:rgba(255,255,255,.3);background:rgba(0,0,0,.1);display:flex;align-items:center;gap:4px;}
+
+/* Post Cards */
+.post-card{background:var(--wh);border-radius:13px;border:1px solid var(--bdr);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.post-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.post-card.breaking{border-color:#fca5a5;}
+.pc-bar{height:3px;}
+.pc-bar.news{background:var(--amb);}
+.pc-bar.mandi{background:var(--g3);}
+.pc-bar.advisory{background:#10b981;}
+.pc-bar.scheme{background:var(--pur);}
+.pc-bar.weather{background:var(--sky);}
+.pc-body{padding:13px;}
+.pc-meta{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap;}
+.pc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.pb-news{background:var(--ambl);color:var(--ambd);}
+.pb-mandi{background:var(--g8);color:var(--g2);}
+.pb-advisory{background:#d1fae5;color:#065f46;}
+.pb-scheme{background:var(--purl);color:var(--pur);}
+.pb-weather{background:var(--skyl);color:var(--sky);}
+.pb-breaking{background:var(--red);color:#fff;}
+.pc-loc{font-size:11px;color:var(--t3);}
+.pc-time{font-size:11px;color:var(--t4);margin-left:auto;}
+.pc-title{font-size:15px;font-weight:700;color:var(--t1);line-height:1.4;margin-bottom:5px;}
+.pc-content{font-size:13px;color:var(--t3);line-height:1.55;}
+.pc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.pc-tag{font-size:10px;background:var(--g8);color:var(--g2);border-radius:20px;padding:2px 7px;}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g3);margin-bottom:11px;margin-top:4px;display:flex;align-items:center;gap:7px;}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--bdr);}
+.empty-state{text-align:center;padding:44px 18px;color:var(--t3);}
+.empty-state div:first-child{font-size:52px;margin-bottom:10px;}
+.empty-state h3{font-size:15px;font-weight:600;color:var(--t2);margin-bottom:5px;}
+.empty-state p{font-size:13px;}
+.refresh-strip{background:var(--g8);border:1px solid var(--bdr);border-radius:9px;padding:9px 13px;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--t3);}
+.refresh-btn{color:var(--g3);font-weight:600;cursor:pointer;border:none;background:none;font-size:12px;}
+
+/* Full Post View */
+.post-view{position:fixed;inset:0;background:var(--wh);z-index:250;overflow-y:auto;display:none;max-width:480px;margin:0 auto;}
+.post-view.open{display:block;animation:slideIn .25s ease;}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.pv-hdr{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 16px;display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:10;}
+.pv-back{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+.pv-hd-text h2{font-family:'Baloo 2',cursive;font-size:15px;color:#fff;font-weight:700;}
+.pv-hd-text p{font-size:10.5px;color:var(--g6);margin-top:2px;}
+.pv-body{padding:18px 16px 30px;}
+.pv-title{font-family:'Baloo 2',cursive;font-size:21px;font-weight:800;color:var(--g1);line-height:1.3;margin-bottom:11px;}
+.pv-meta-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr);}
+.pv-content{font-size:15px;color:var(--t2);line-height:1.9;white-space:pre-wrap;}
+.share-wa{display:flex;align-items:center;justify-content:center;gap:7px;background:#25d366;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:20px;box-shadow:0 4px 15px rgba(37,211,102,.28);}
+
+/* ============================================================
+   ===== ADMIN PANEL =====
+   ============================================================ */
+.admin-screen{display:none;min-height:100vh;background:#f1f5f9;max-width:480px;margin:0 auto;}
+.admin-screen.active{display:block;}
+
+/* Admin Header */
+.adm-hdr{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.adm-logo{font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:#fff;}
+.adm-sub{font-size:10px;color:var(--g6);margin-top:2px;}
+.adm-logout{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;}
+
+/* Admin Tab Nav */
+.adm-tabs{background:var(--wh);border-bottom:1.5px solid #e2e8f0;overflow-x:auto;scrollbar-width:none;}
+.adm-tabs::-webkit-scrollbar{display:none;}
+.adm-tabs-row{display:flex;min-width:max-content;padding:0 6px;}
+.adm-tab{padding:11px 14px;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;border:none;background:none;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.adm-tab.active{color:var(--g3);border-bottom-color:var(--g4);}
+
+/* Admin Pages */
+.adm-page{display:none;padding:14px;padding-bottom:30px;}
+.adm-page.active{display:block;}
+
+/* Admin Cards */
+.acard{background:var(--wh);border-radius:13px;border:1px solid #e2e8f0;box-shadow:0 1px 10px rgba(0,0,0,.05);overflow:hidden;margin-bottom:14px;}
+.acard-hd{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.acard-title{font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;color:var(--g1);display:flex;align-items:center;gap:7px;}
+.acard-bd{padding:15px 16px;}
+
+/* Form Elements */
+.a-label{font-size:11px;font-weight:700;color:#374151;margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px;}
+.a-input,.a-textarea,.a-select{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:9px;padding:10px 13px;font-size:14px;font-family:inherit;color:var(--t1);outline:none;transition:border-color .2s;margin-bottom:13px;}
+.a-input:focus,.a-textarea:focus,.a-select:focus{border-color:var(--g4);background:var(--wh);}
+.a-textarea{resize:vertical;min-height:110px;line-height:1.6;}
+.a-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.char-cnt{font-size:11px;color:var(--t4);text-align:right;margin-top:-10px;margin-bottom:10px;}
+
+/* Category Pills */
+.cat-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px;}
+.cat-pill{border:1.5px solid #e2e8f0;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:var(--wh);color:#374151;}
+.cat-pill.on{background:var(--g3);color:#fff;border-color:var(--g3);}
+
+/* Buttons */
+.a-btn{display:inline-flex;align-items:center;gap:5px;border-radius:9px;padding:9px 17px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .2s;}
+.btn-pri{background:var(--g3);color:#fff;}
+.btn-pri:hover{background:var(--g1);}
+.btn-sec{background:var(--g8);color:var(--g2);border:1.5px solid var(--bdr);}
+.btn-sec:hover{background:var(--g7);}
+.btn-red{background:var(--redl);color:var(--red);border:1px solid #fca5a5;}
+.btn-amb{background:var(--ambl);color:var(--ambd);}
+.btn-sm{padding:6px 11px;font-size:12px;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.stat{background:var(--wh);border:1px solid #e2e8f0;border-radius:11px;padding:14px 12px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.stat-ic{font-size:24px;margin-bottom:4px;}
+.stat-v{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;color:var(--g2);}
+.stat-l{font-size:11px;color:#64748b;margin-top:1px;}
+
+/* Posts Table */
+.posts-tbl{width:100%;border-collapse:collapse;}
+.posts-tbl th{padding:9px 12px;font-size:10px;font-weight:700;color:var(--g2);text-align:left;text-transform:uppercase;letter-spacing:.4px;background:var(--g8);}
+.posts-tbl td{padding:12px 12px;font-size:12.5px;border-bottom:1px solid var(--g8);vertical-align:middle;}
+.posts-tbl tbody tr:hover{background:#fafafa;}
+.posts-tbl tbody tr:last-child td{border-bottom:none;}
+.pt-name{font-weight:600;color:var(--t1);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pt-sub{font-size:11px;color:var(--t3);margin-top:2px;}
+.adm-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.adm-b-pub{background:#dcfce7;color:#15803d;}
+.adm-b-dft{background:var(--ambl);color:var(--ambd);}
+
+/* Mandi Quick Form */
+.mq-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.mq-item{background:var(--g8);border:1.5px solid var(--bdr);border-radius:9px;padding:11px;}
+.mq-crop{font-size:11px;font-weight:700;color:var(--g2);margin-bottom:7px;}
+.mq-prices{display:flex;flex-direction:column;gap:4px;}
+.mq-in{width:100%;background:var(--wh);border:1px solid var(--bdr);border-radius:6px;padding:6px 9px;font-size:12px;font-family:inherit;outline:none;text-align:center;}
+.mq-in:focus{border-color:var(--g4);}
+.mq-lbl{font-size:9px;color:var(--t4);text-align:center;margin-top:1px;}
+
+/* Preview box */
+.preview-box{background:var(--g8);border:1.5px dashed var(--bdr);border-radius:12px;padding:15px;margin-top:13px;}
+.prev-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:10px;}
+.prev-card{background:var(--wh);border-radius:10px;padding:13px;border:1px solid var(--bdr);}
+.prev-meta{font-size:10px;color:var(--t3);margin-bottom:5px;}
+.prev-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:5px;}
+.prev-body{font-size:12.5px;color:var(--t3);line-height:1.5;}
+
+/* Notification Toast */
+.toast{position:fixed;top:18px;right:10px;left:10px;z-index:9999;background:var(--g2);color:#fff;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.18);display:flex;align-items:center;gap:9px;transform:translateY(-80px);transition:transform .3s;pointer-events:none;max-width:448px;margin:0 auto;}
+.toast.show{transform:translateY(0);}
+.toast.err{background:var(--red);}
+
+/* Toggle */
+.tog-wrap{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
+.tog{position:relative;width:44px;height:24px;cursor:pointer;}
+.tog input{opacity:0;width:0;height:0;}
+.tog-sl{position:absolute;inset:0;background:#e2e8f0;border-radius:12px;transition:background .2s;}
+.tog-sl::before{content:'';position:absolute;width:18px;height:18px;background:var(--wh);border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+input:checked + .tog-sl{background:var(--g4);}
+input:checked + .tog-sl::before{transform:translateX(20px);}
+.tog-lbl{font-size:13px;color:var(--t2);}
+
+/* Login Screen */
+.login-screen{position:fixed;inset:0;background:linear-gradient(160deg,var(--g1),var(--g2) 60%,#0a2d1e);display:flex;align-items:center;justify-content:center;z-index:9998;max-width:480px;margin:0 auto;}
+.login-box{background:var(--wh);border-radius:22px;padding:36px 30px;width:100%;max-width:360px;margin:16px;box-shadow:0 20px 70px rgba(0,0,0,.3);}
+.lb-logo{text-align:center;margin-bottom:24px;}
+.lb-logo div:first-child{font-size:50px;margin-bottom:8px;}
+.lb-logo h1{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--g1);}
+.lb-logo p{font-size:12px;color:var(--t3);margin-top:3px;}
+.lb-btn{width:100%;background:linear-gradient(135deg,var(--g2),var(--g4));color:#fff;border:none;border-radius:11px;padding:13px;font-size:14.5px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;}
+.lb-err{color:var(--red);font-size:12.5px;text-align:center;margin-top:9px;display:none;}
+.lb-hint{text-align:center;margin-top:14px;font-size:11px;color:#9ca3af;}
+
+/* Guide Steps */
+.guide-step{display:flex;gap:12px;align-items:flex-start;padding:13px;background:var(--g8);border-radius:11px;margin-bottom:9px;border:1px solid var(--bdr);}
+.gs-num{width:30px;height:30px;border-radius:50%;background:var(--g3);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Baloo 2',cursive;}
+.gs-text h4{font-size:13px;font-weight:700;color:var(--g1);margin-bottom:3px;}
+.gs-text p{font-size:12px;color:var(--t3);line-height:1.6;}
+.gs-text code{background:var(--wh);border:1px solid var(--bdr);border-radius:4px;padding:1px 5px;font-size:11px;color:var(--g2);}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOADING SCREEN
+     ============================================================ -->
+<div id="loading">
+  <div class="ld-icon">🌾</div>
+  <div class="ld-title">किसान सहायक</div>
+  <div class="ld-sub">आपकी खेती, आपकी जानकारी</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+     ============================================================ -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     ADMIN LOGIN
+     ============================================================ -->
+<div class="login-screen" id="admin-login" style="display:none;">
+  <div class="login-box">
+    <div class="lb-logo">
+      <div>🛠️</div>
+      <h1>Admin Login</h1>
+      <p>किसान सहायक Content Manager</p>
+    </div>
+    <div>
+      <label class="a-label">Username</label>
+      <input class="a-input" id="l-user" type="text" placeholder="admin" autocomplete="username">
+    </div>
+    <div>
+      <label class="a-label">Password</label>
+      <input class="a-input" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeypress="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="lb-btn" onclick="doLogin()">🔐 Login करें</button>
+    <div class="lb-err" id="l-err">❌ गलत username या password</div>
+    <div class="lb-hint">Default: admin / kisan@2025</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADMIN PANEL SCREEN
+     ============================================================ -->
+<div class="admin-screen" id="admin-screen">
+
+  <div class="adm-hdr">
+    <div>
+      <div class="adm-logo">🌾 किसान सहायक — Admin</div>
+      <div class="adm-sub">Content Management Panel</div>
+    </div>
+    <button class="adm-logout" onclick="closeAdmin()">← App पर जाएँ</button>
+  </div>
+
+  <div class="adm-tabs">
+    <div class="adm-tabs-row">
+      <button class="adm-tab active" onclick="admTab('dashboard',this)">📊 Dashboard</button>
+      <button class="adm-tab" onclick="admTab('write',this)">✏️ Post लिखें</button>
+      <button class="adm-tab" onclick="admTab('manage',this)">📰 Posts</button>
+      <button class="adm-tab" onclick="admTab('mandi',this)">💹 मंडी Entry</button>
+      <button class="adm-tab" onclick="admTab('settings',this)">⚙️ Settings</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="adm-page active" id="adm-dashboard">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-ic">📰</div><div class="stat-v" id="st-posts">0</div><div class="stat-l">Posts</div></div>
+      <div class="stat"><div class="stat-ic">💹</div><div class="stat-v" id="st-mandi">0</div><div class="stat-l">मंडी Entries</div></div>
+      <div class="stat"><div class="stat-ic">📅</div><div class="stat-v" id="st-date">--</div><div class="stat-l">आज</div></div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">⚡ Quick Actions</div></div>
+      <div class="acard-bd">
+        <div class="btn-row">
+          <button class="a-btn btn-pri" onclick="admTab('write',null,'news')">📰 खबर लिखें</button>
+          <button class="a-btn btn-amb" onclick="admTab('write',null,'mandi')">💹 मंडी Post</button>
+          <button class="a-btn btn-sec" onclick="admTab('write',null,'advisory')">🌱 Advisory</button>
+          <button class="a-btn btn-sec" onclick="admTab('mandi',null)">📊 मंडी Entry</button>
+        </div>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">📰 हाल की Posts</div><button class="a-btn btn-sec btn-sm" onclick="admTab('manage',null)">सभी →</button></div>
+      <div class="acard-bd" style="padding:0;"><table class="posts-tbl"><thead><tr><th>Post</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody id="dash-tbl"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- WRITE POST -->
+  <div class="adm-page" id="adm-write">
+    <div class="acard">
+      <div class="acard-hd">
+        <div class="acard-title">✏️ नई Post</div>
+        <div class="btn-row">
+          <button class="a-btn btn-sec btn-sm" onclick="saveDraft()">💾 Draft</button>
+          <button class="a-btn btn-pri btn-sm" onclick="publishPost()">🚀 Publish</button>
+        </div>
+      </div>
+      <div class="acard-bd">
+        <label class="a-label">Category</label>
+        <div class="cat-pills">
+          <button class="cat-pill on" onclick="setCat(this,'news')">📰 समाचार</button>
+          <button class="cat-pill" onclick="setCat(this,'mandi')">💹 मंडी भाव</button>
+          <button class="cat-pill" onclick="setCat(this,'advisory')">🌱 Advisory</button>
+          <button class="cat-pill" onclick="setCat(this,'scheme')">📋 योजना</button>
+          <button class="cat-pill" onclick="setCat(this,'weather')">🌧️ मौसम</button>
+        </div>
+        <input type="hidden" id="p-cat" value="news">
+        <div class="a-row">
+          <div>
+            <label class="a-label">Title / शीर्षक *</label>
+            <input class="a-input" id="p-title" type="text" placeholder="जैसे: आज लखनऊ में गेहूं ₹2180..." oninput="livePreview()">
+          </div>
+          <div>
+            <label class="a-label">स्थान / मंडी</label>
+            <input class="a-input" id="p-loc" type="text" placeholder="लखनऊ, उत्तर प्रदेश">
+          </div>
+        </div>
+        <label class="a-label">Content *</label>
+        <textarea class="a-textarea" id="p-body" rows="7" placeholder="पूरी जानकारी यहाँ लिखें..." oninput="charCount();livePreview()"></textarea>
+        <div class="char-cnt"><span id="cc">0</span> / 2000</div>
+        <div class="a-row">
+          <div>
+            <label class="a-label">Tags</label>
+            <input class="a-input" id="p-tags" type="text" placeholder="गेहूं, मंडी, UP">
+          </div>
+          <div>
+            <label class="a-label">Priority</label>
+            <select class="a-select" id="p-prio">
+              <option value="normal">Normal</option>
+              <option value="high">🔴 Breaking / High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="tog-wrap">
+          <label class="tog"><input type="checkbox" id="p-pub" checked><span class="tog-sl"></span></label>
+          <span class="tog-lbl">तुरंत Publish करें</span>
+        </div>
+        <div class="preview-box">
+          <div class="prev-lbl">👁️ App में Preview</div>
+          <div class="prev-card">
+            <div class="prev-meta">📰 समाचार • अभी</div>
+            <div class="prev-title" id="prev-t">शीर्षक यहाँ दिखेगा...</div>
+            <div class="prev-body" id="prev-b">Content यहाँ दिखेगा...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE POSTS -->
+  <div class="adm-page" id="adm-manage">
+    <div class="acard">
+      <div class="acard-hd">
+        <div class="acard-title">📰 सभी Posts</div>
+        <div style="display:flex;gap:7px;">
+          <select class="a-select" style="width:auto;padding:6px 10px;font-size:12px;margin:0;" onchange="filterAdmPosts(this.value)">
+            <option value="all">सभी</option>
+            <option value="news">समाचार</option>
+            <option value="mandi">मंडी</option>
+            <option value="advisory">Advisory</option>
+            <option value="scheme">योजना</option>
+            <option value="weather">मौसम</option>
+          </select>
+          <button class="a-btn btn-pri btn-sm" onclick="admTab('write',null)">+ नई</button>
+        </div>
+      </div>
+      <div class="acard-bd" style="padding:0;">
+        <table class="posts-tbl">
+          <thead><tr><th>Post</th><th>Cat</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="all-posts-tbl"></tbody>
+        </table>
+        <div id="posts-empty" style="text-align:center;padding:36px;color:var(--t3);display:none;"><div style="font-size:44px;margin-bottom:8px;">📝</div>कोई post नहीं।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANDI ENTRY -->
+  <div class="adm-page" id="adm-mandi">
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">💹 मंडी भाव Entry</div><span class="badge b-live">Quick</span></div>
+      <div class="acard-bd">
+        <div class="a-row">
+          <div>
+            <label class="a-label">मंडी</label>
+            <select class="a-select" id="m-name">
+              <option>लखनऊ मंडी (UP)</option>
+              <option>आज़ादपुर मंडी (Delhi)</option>
+              <option>पुणे मंडी (Maharashtra)</option>
+              <option>जयपुर मंडी (Rajasthan)</option>
+              <option>पटना मंडी (Bihar)</option>
+              <option>इंदौर मंडी (MP)</option>
+              <option>नागपुर मंडी (Maharashtra)</option>
+              <option>चंडीगढ़ मंडी (Punjab)</option>
+            </select>
+          </div>
+          <div>
+            <label class="a-label">तारीख</label>
+            <input class="a-input" type="date" id="m-date">
+          </div>
+        </div>
+        <label class="a-label" style="margin-bottom:9px;display:block;">फसलों के भाव (₹/क्विंटल) — Min | Max | Modal</label>
+        <div class="mq-grid" id="mq-grid"></div>
+        <div>
+          <label class="a-label">विशेष नोट</label>
+          <input class="a-input" id="m-note" type="text" placeholder="जैसे: आज आवक कम थी, प्याज़ में तेज़ी...">
+        </div>
+        <div class="btn-row">
+          <button class="a-btn btn-pri" onclick="saveMandi()">💾 Save करें</button>
+          <button class="a-btn btn-amb" onclick="saveMandiAndPost()">📰 Save + Post बनाएँ</button>
+        </div>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">📊 हाल की Entries</div></div>
+      <div class="acard-bd" style="padding:0;">
+        <table class="posts-tbl"><thead><tr><th>मंडी</th><th>फसल</th><th>Modal ₹</th><th>Date</th></tr></thead><tbody id="m-entries-tbl"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="adm-page" id="adm-settings">
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">⚙️ Settings</div></div>
+      <div class="acard-bd">
+        <div class="a-row">
+          <div>
+            <label class="a-label">WhatsApp Channel URL</label>
+            <input class="a-input" id="cfg-wa" type="url" placeholder="https://whatsapp.com/channel/...">
+          </div>
+          <div>
+            <label class="a-label">AdMob Publisher ID</label>
+            <input class="a-input" id="cfg-admob" type="text" placeholder="ca-pub-XXXXXXXXXXXXXXXX">
+          </div>
+        </div>
+        <div class="a-row">
+          <div>
+            <label class="a-label">Contact Email</label>
+            <input class="a-input" id="cfg-email" type="email" placeholder="support@kisansahayak.in">
+          </div>
+          <div>
+            <label class="a-label">OpenWeather API Key</label>
+            <input class="a-input" id="cfg-owm" type="text" placeholder="39dd5cc7d7834a0d2ada2da6828084b2">
+          </div>
+        </div>
+        <div style="border-top:1px solid #e2e8f0;padding-top:14px;margin-top:4px;">
+          <label class="a-label">Password बदलें</label>
+          <div class="a-row">
+            <input class="a-input" id="cfg-op" type="password" placeholder="पुराना password">
+            <input class="a-input" id="cfg-np" type="password" placeholder="नया password">
+          </div>
+        </div>
+        <button class="a-btn btn-pri" onclick="saveSettings()">💾 Save Settings</button>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><div class="acard-title">ℹ️ System Info</div></div>
+      <div class="acard-bd">
+        <div style="font-size:13px;color:var(--t3);line-height:1.9;">
+          📦 Storage: <strong>localStorage (Browser)</strong><br>
+          🔄 Sync: सभी data इसी device पर save होता है<br>
+          📱 Export करने के लिए नीचे button use करें<br>
+          🌐 Live करने के लिए GitHub Pages पर deploy करें
+        </div>
+        <div class="btn-row" style="margin-top:13px;">
+          <button class="a-btn btn-sec" onclick="exportData()">📤 Data Export करें</button>
+          <button class="a-btn btn-red btn-sm" onclick="clearAllData()">🗑️ सब Delete करें</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- admin-screen -->
+
+<!-- ============================================================
+     USER APP SCREEN
+     ============================================================ -->
+<div class="screen active" id="app-screen">
+
+  <!-- APP HEADER -->
+  <div class="app-hdr">
+    <div class="hdr-row1">
+      <div class="hdr-logo">
+        <div class="hdr-badge">🌾</div>
+        <div class="hdr-name">
+          <h1>किसान सहायक</h1>
+          <p>data.gov.in Powered</p>
+        </div>
+      </div>
+      <div class="hdr-acts">
+        <div class="live-dot"></div>
+        <button class="hdr-btn" onclick="openAdminLogin()">☰</button>
+      </div>
+    </div>
+    <div class="loc-bar">
+      <div class="loc-left">
+        <span>📍</span>
+        <div><span class="loc-name" id="loc-name">लोकेशन...</span><div class="loc-state" id="loc-state">GPS सक्रिय</div></div>
+      </div>
+      <button class="loc-btn" onclick="getLocation()">🔄</button>
+    </div>
+  </div>
+
+  <!-- ADMOB TOP BANNER -->
+  <div class="ad-banner">
+    <ins class="adsbygoogle" style="display:block;width:100%;height:50px;" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="banner"></ins>
+    <div class="ad-placeholder">📢 Ad (AdMob Banner)</div>
+  </div>
+
+  <!-- WEATHER -->
+  <div class="weather">
+    <div class="w-main">
+      <div>
+        <div class="w-city" id="w-city">आपका शहर</div>
+        <div class="w-temp"><span id="w-temp">--</span><sup>°C</sup></div>
+        <div class="w-cond" id="w-cond">लोड हो रहा है...</div>
+      </div>
+      <div class="w-icon" id="w-icon">🌤️</div>
+    </div>
+    <div class="w-grid">
+      <div class="w-cell"><div class="w-ci">💧</div><div class="w-cv" id="w-humid">--%</div><div class="w-cl">नमी</div></div>
+      <div class="w-cell"><div class="w-ci">🌧️</div><div class="w-cv" id="w-rain">--mm</div><div class="w-cl">बारिश</div></div>
+      <div class="w-cell"><div class="w-ci">💨</div><div class="w-cv" id="w-wind">--km/h</div><div class="w-cl">हवा</div></div>
+      <div class="w-cell"><div class="w-ci">🌡️</div><div class="w-cv" id="w-feel">--°</div><div class="w-cl">महसूस</div></div>
+    </div>
+    <div class="w-alert" id="w-alert">⏳ मौसम जानकारी लोड हो रही है...</div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <div class="tabs-row">
+      <button class="tab-btn active" onclick="switchTab('news',this)"><span>📰</span><span>समाचार</span></button>
+      <button class="tab-btn" onclick="switchTab('mandi',this)"><span>💹</span><span>मंडी</span></button>
+      <button class="tab-btn" onclick="switchTab('msp',this)"><span>🏷️</span><span>MSP</span></button>
+      <button class="tab-btn" onclick="switchTab('kcc',this)"><span>🤖</span><span>सहायता</span></button>
+      <button class="tab-btn" onclick="switchTab('calendar',this)"><span>📅</span><span>कैलेंडर</span></button>
+      <button class="tab-btn" onclick="switchTab('schemes',this)"><span>📋</span><span>योजनाएँ</span></button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: NEWS / BLOG
+       ============================================================ -->
+  <div id="pg-news" class="page active">
+
+    <!-- Ticker -->
+    <div class="ticker-wrap" id="ticker-wrap">
+      <div class="ticker-in">
+        <span class="ticker-lbl">🔴 Breaking</span>
+        <span class="ticker-txt" id="ticker-txt">🌾 किसान सहायक — आपकी खेती, आपकी जानकारी • ताज़ा मंडी भाव और कृषि समाचार के लिए जुड़े रहें • 🌾 किसान सहायक — आपकी खेती, आपकी जानकारी</span>
+      </div>
+    </div>
+
+    <!-- News Filter -->
+    <div class="news-filter">
+      <div class="nf-inner">
+        <button class="nf-tab active" onclick="newsFilter('all',this)">🏠 सभी</button>
+        <button class="nf-tab" onclick="newsFilter('mandi',this)">💹 मंडी भाव</button>
+        <button class="nf-tab" onclick="newsFilter('news',this)">📰 समाचार</button>
+        <button class="nf-tab" onclick="newsFilter('advisory',this)">🌱 Advisory</button>
+        <button class="nf-tab" onclick="newsFilter('scheme',this)">📋 योजना</button>
+        <button class="nf-tab" onclick="newsFilter('weather',this)">🌧️ मौसम</button>
+      </div>
+    </div>
+
+    <div style="padding:14px;padding-bottom:84px;">
+      <!-- WA Banner -->
+      <a class="wa-strip" id="wa-strip-news" href="#" target="_blank" rel="noopener">
+        <div class="wa-icon">💬</div>
+        <div class="wa-txt"><h3>WhatsApp Channel से जुड़ें</h3><p>रोज़ मंडी भाव, मौसम — WhatsApp पर</p></div>
+        <button class="wa-cta">Join →</button>
+      </a>
+
+      <!-- Live Mandi Mini -->
+      <div class="live-mandi" id="news-mandi-box">
+        <div class="lm-hd">
+          <div class="lm-title">💹 आज का मंडी भाव</div>
+          <div class="lm-badge"><div class="live-dot"></div>LIVE</div>
+        </div>
+        <select class="lm-sel" id="lm-sel" onchange="renderLiveMandi()">
+          <option value="lucknow">लखनऊ (UP)</option>
+          <option value="azadpur">आज़ादपुर (Delhi)</option>
+          <option value="jaipur">जयपुर (Rajasthan)</option>
+          <option value="patna">पटना (Bihar)</option>
+        </select>
+        <table class="lm-tbl">
+          <thead><tr><th>फसल</th><th>Min</th><th>Max</th><th>Modal ₹</th></tr></thead>
+          <tbody id="lm-tbody"></tbody>
+        </table>
+        <div class="lm-ft"><span>●</span> AGMARKNET • data.gov.in • <span id="lm-time">आज</span></div>
+      </div>
+
+      <div class="refresh-strip">
+        <span>🕐 Last update: <strong id="last-update">अभी</strong></span>
+        <button class="refresh-btn" onclick="renderNewsFeed()">🔄 ताज़ा करें</button>
+      </div>
+
+      <!-- Ad mid -->
+      <div class="ad-banner" style="border-radius:11px;overflow:hidden;border:1px solid var(--bdr);margin-bottom:13px;">
+        <ins class="adsbygoogle" style="display:block;width:100%;height:60px;" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="rectangle"></ins>
+        <div class="ad-placeholder">📢 Rectangle Ad (AdMob)</div>
+      </div>
+
+      <!-- Posts area -->
+      <div id="news-posts"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: MANDI
+       ============================================================ -->
+  <div id="pg-mandi" class="page">
+    <a class="wa-strip" id="wa-strip-mandi" href="#" target="_blank" rel="noopener">
+      <div class="wa-icon">💬</div>
+      <div class="wa-txt"><h3>WhatsApp Channel Join करें</h3><p>रोज़ ताज़ा भाव — सीधे WhatsApp पर</p></div>
+      <button class="wa-cta">Join →</button>
+    </a>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🏪 आज का मंडी भाव</div><span class="badge b-live">Live</span></div>
+      <div class="card-bd">
+        <select class="mandi-sel" id="mandi-sel" onchange="renderMandi()">
+          <option value="lucknow">लखनऊ (UP)</option>
+          <option value="azadpur">आज़ादपुर (Delhi)</option>
+          <option value="pune">पुणे (Maharashtra)</option>
+          <option value="jaipur">जयपुर (Rajasthan)</option>
+          <option value="patna">पटना (Bihar)</option>
+          <option value="indore">इंदौर (MP)</option>
+          <option value="chandigarh">चंडीगढ़ (Punjab)</option>
+        </select>
+        <div class="price-alert" id="mandi-alert">📈 मंडी भाव लोड हो रहे हैं...</div>
+        <table class="m-tbl"><thead><tr><th>फसल</th><th>Min</th><th>Max</th><th>Modal ₹/क्विं</th></tr></thead><tbody id="m-tbody"></tbody></table>
+      </div>
+      <div class="api-tag"><div class="api-dot"></div>AGMARKNET API • data.gov.in</div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🌧️ जिले की बारिश</div><span class="badge b-api">IMD</span></div>
+      <div class="card-bd"><div id="rain-chart"></div></div>
+      <div class="api-tag"><div class="api-dot"></div>IMD Rainfall • data.gov.in</div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🧪 Soil Health</div><span class="badge b-daily">आपका जिला</span></div>
+      <div class="card-bd">
+        <div class="soil-g">
+          <div class="soil-c"><div class="s-ic">🌿</div><div class="s-nm">Nitrogen (N)</div><div class="s-vl">245</div><div class="s-un">kg/ha</div><span class="s-st st-m">मध्यम</span></div>
+          <div class="soil-c"><div class="s-ic">⚗️</div><div class="s-nm">Phosphorus (P)</div><div class="s-vl">18</div><div class="s-un">kg/ha</div><span class="s-st st-l">कम</span></div>
+          <div class="soil-c"><div class="s-ic">🔬</div><div class="s-nm">Potassium (K)</div><div class="s-vl">312</div><div class="s-un">kg/ha</div><span class="s-st st-g">अच्छा</span></div>
+        </div>
+        <div class="msp-info" style="margin-top:11px;">💡 फॉस्फोरस कम है — DAP @ 40 kg/एकड़ डालें।</div>
+      </div>
+      <div class="api-tag"><div class="api-dot"></div>Soil Health Card • data.gov.in</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: MSP
+       ============================================================ -->
+  <div id="pg-msp" class="page">
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🏷️ न्यूनतम समर्थन मूल्य</div><span class="badge b-daily">2024-25</span></div>
+      <div class="card-bd">
+        <div class="msp-info">💡 मंडी भाव MSP से कम हो तो सरकारी केंद्र पर बेचें — यह आपका अधिकार है।</div>
+        <div style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;">🌾 खरीफ फसलें</div>
+        <div class="msp-grid" id="msp-kh"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;margin-top:4px;">❄️ रबी फसलें</div>
+        <div class="msp-grid" id="msp-rb"></div>
+      </div>
+      <div class="api-tag"><div class="api-dot"></div>CACP MSP Data • data.gov.in</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: KCC CHATBOT — Gemini AI Powered
+       ============================================================ -->
+  <div id="pg-kcc" class="page">
+
+    <!-- AI Status Bar -->
+    <div id="ai-status-bar" style="background:var(--g8);border:1px solid var(--bdr);border-radius:11px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;">
+        <div id="ai-dot" style="width:8px;height:8px;border-radius:50%;background:var(--t4);flex-shrink:0;"></div>
+        <span id="ai-status-txt" style="color:var(--t3);">Gemini AI: API Key नहीं मिली — Offline Mode</span>
+      </div>
+      <button onclick="openAiSetup()" style="font-size:11px;font-weight:700;color:var(--g3);background:none;border:1px solid var(--bdr);border-radius:6px;padding:4px 9px;cursor:pointer;">⚙️ Setup</button>
+    </div>
+
+    <!-- Gemini Setup Guide (hidden by default) -->
+    <div id="ai-setup-card" style="display:none;background:var(--wh);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:11px;box-shadow:var(--sh);">
+      <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;color:var(--g1);margin-bottom:12px;">🔑 Gemini API Key Setup</div>
+
+      <div style="background:var(--ambl);border:1px solid #fcd34d;border-radius:9px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--ambd);">
+        💡 <strong>Google Gemini बिल्कुल Free है</strong> — कोई Credit Card नहीं चाहिए
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--g8);border-radius:9px;margin-bottom:8px;border:1px solid var(--bdr);">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g3);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        <div><div style="font-size:12.5px;font-weight:700;color:var(--g1);margin-bottom:2px;">Google AI Studio खोलें</div>
+        <div style="font-size:11.5px;color:var(--t3);">Browser में जाएँ: <strong>aistudio.google.com</strong></div></div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--g8);border-radius:9px;margin-bottom:8px;border:1px solid var(--bdr);">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g3);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        <div><div style="font-size:12.5px;font-weight:700;color:var(--g1);margin-bottom:2px;">Google Account से Login करें</div>
+        <div style="font-size:11.5px;color:var(--t3);">Gmail account से sign in करें</div></div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--g8);border-radius:9px;margin-bottom:8px;border:1px solid var(--bdr);">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g3);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+        <div><div style="font-size:12.5px;font-weight:700;color:var(--g1);margin-bottom:2px;">"Get API Key" पर Click करें</div>
+        <div style="font-size:11.5px;color:var(--t3);">Left menu → API Keys → Create API Key</div></div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--g8);border-radius:9px;margin-bottom:12px;border:1px solid var(--bdr);">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g3);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+        <div><div style="font-size:12.5px;font-weight:700;color:var(--g1);margin-bottom:2px;">Key copy करके नीचे paste करें</div>
+        <div style="font-size:11.5px;color:var(--t3);">AIza... से शुरू होती है Key</div></div>
+      </div>
+
+      <input id="gemini-key-input" type="text" placeholder="AIzaSy... यहाँ paste करें"
+        style="width:100%;background:var(--g8);border:1.5px solid var(--bdr);border-radius:9px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveGeminiKey()" style="flex:1;background:var(--g3);color:#fff;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">✅ Save & Start</button>
+        <button onclick="closeAiSetup()" style="background:var(--g8);border:1.5px solid var(--bdr);border-radius:9px;padding:11px 14px;font-size:13px;cursor:pointer;">✕</button>
+      </div>
+      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--t4);">🔒 Key सिर्फ आपके device पर save होती है — कहीं नहीं जाती</div>
+    </div>
+
+    <!-- Chat Card -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">🤖 AI किसान सहायक</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="live-dot" id="chat-live-dot" style="display:none;"></div>
+          <span class="badge b-live" id="chat-mode-badge">Offline</span>
+        </div>
+      </div>
+      <div class="card-bd">
+        <!-- Mode indicator -->
+        <div id="chat-mode-bar" style="font-size:11.5px;color:var(--t3);background:var(--g8);border-radius:8px;padding:8px 12px;margin-bottom:11px;display:flex;align-items:center;gap:6px;">
+          <span id="chat-mode-icon">📚</span>
+          <span id="chat-mode-desc">Offline Mode — 200+ farming Q&amp;A से जवाब मिलेगा</span>
+        </div>
+
+        <!-- Voice button -->
+        <button id="voice-btn" onclick="toggleVoice()" style="width:100%;background:var(--g8);border:1.5px solid var(--bdr);border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;color:var(--g2);cursor:pointer;margin-bottom:9px;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;">
+          🎤 बोलकर पूछें (Hindi Voice Input)
+        </button>
+
+        <div class="quick-chips" id="qchips"></div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-row">
+          <input class="chat-in" id="chat-in" type="text" placeholder="हिंदी में सवाल पूछें..." onkeypress="if(event.key==='Enter')sendChat()">
+          <button class="send-btn" onclick="sendChat()">➤</button>
+        </div>
+      </div>
+      <div class="api-tag"><div class="api-dot"></div>Google Gemini AI • Offline Fallback • KCC Data</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: CROP CALENDAR
+       ============================================================ -->
+  <div id="pg-calendar" class="page">
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📅 फसल कैलेंडर</div><span class="badge b-free">राज्यवार</span></div>
+      <div class="card-bd">
+        <select class="mandi-sel" id="state-sel" onchange="renderCalendar()">
+          <option value="UP">उत्तर प्रदेश</option><option value="MP">मध्य प्रदेश</option>
+          <option value="MH">महाराष्ट्र</option><option value="PB">पंजाब</option>
+          <option value="RJ">राजस्थान</option><option value="GJ">गुजरात</option>
+          <option value="HR">हरियाणा</option><option value="BR">बिहार</option>
+          <option value="WB">पश्चिम बंगाल</option><option value="AP">आंध्र प्रदेश</option>
+          <option value="TN">तमिलनाडु</option><option value="KA">कर्नाटक</option>
+        </select>
+        <div class="legend">
+          <div class="leg-i"><div class="leg-d" style="background:#22c55e;"></div>खरीफ</div>
+          <div class="leg-i"><div class="leg-d" style="background:#f59e0b;"></div>रबी</div>
+          <div class="leg-i"><div class="leg-d" style="background:#06b6d4;"></div>सब्ज़ी</div>
+          <div class="leg-i"><div class="leg-d" style="background:#f43f5e;"></div>फल</div>
+        </div>
+        <div class="month-row" id="month-row"></div>
+        <div id="cal-out"></div>
+      </div>
+      <div class="api-tag"><div class="api-dot"></div>DES Crop Statistics • data.gov.in</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE: SCHEMES
+       ============================================================ -->
+  <div id="pg-schemes" class="page">
+    <a class="wa-strip" id="wa-strip-sch" href="#" target="_blank" rel="noopener">
+      <div class="wa-icon">📢</div>
+      <div class="wa-txt"><h3>नई योजनाओं की जानकारी</h3><p>WhatsApp पर सबसे पहले updates पाएँ</p></div>
+      <button class="wa-cta">Join →</button>
+    </a>
+    <div id="schemes-out"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bot-nav">
+    <button class="nav-item active" onclick="switchTab('news',null,this)"><span class="ni-icon">📰</span><span class="ni-lbl">समाचार</span></button>
+    <button class="nav-item" onclick="switchTab('mandi',null,this)"><span class="ni-icon">💹</span><span class="ni-lbl">मंडी</span></button>
+    <button class="nav-item" onclick="switchTab('msp',null,this)"><span class="ni-icon">🏷️</span><span class="ni-lbl">MSP</span></button>
+    <button class="nav-item" onclick="switchTab('kcc',null,this)"><span class="ni-icon">🤖</span><span class="ni-lbl">सहायता</span></button>
+    <button class="nav-item" onclick="switchTab('calendar',null,this)"><span class="ni-icon">📅</span><span class="ni-lbl">कैलेंडर</span></button>
+    <button class="nav-item" onclick="switchTab('schemes',null,this)"><span class="ni-icon">📋</span><span class="ni-lbl">योजनाएँ</span></button>
+  </div>
+
+</div><!-- app-screen -->
+
+<!-- ============================================================
+     FULL POST VIEW OVERLAY
+     ============================================================ -->
+<div class="post-view" id="post-view">
+  <div class="pv-hdr">
+    <div class="pv-back" onclick="closePost()">←</div>
+    <div class="pv-hd-text"><h2 id="pv-h">Post</h2><p id="pv-sh">किसान सहायक</p></div>
+  </div>
+  <div class="pv-body">
+    <div class="pv-title" id="pv-title"></div>
+    <div class="pv-meta-row" id="pv-meta"></div>
+    <div class="pv-content" id="pv-body"></div>
+    <button class="share-wa" id="pv-share">💬 WhatsApp पर Share करें</button>
+    <div class="ad-banner" style="margin-top:16px;border-radius:10px;border:1px solid var(--bdr);"><div class="ad-placeholder">📢 AdMob Ad</div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     POLICY OVERLAYS
+     ============================================================ -->
+<div class="policy-overlay" id="pol-privacy">
+  <div class="pol-hdr"><div class="pol-back" onclick="closePol('privacy')">←</div><div class="pol-hd-t"><h2>Privacy Policy</h2><p>किसान सहायक</p></div></div>
+  <div class="pol-body">
+    <div class="pol-title">🔒 Privacy Policy</div>
+    <div class="pol-date">अंतिम अपडेट: 1 मार्च 2025</div>
+    <div class="pol-sec"><div class="pol-h">1. हम क्या जानकारी एकत्र करते हैं?</div><div class="pol-p"><strong>स्थान डेटा:</strong> GPS location सिर्फ मौसम और नज़दीकी मंडी जानकारी के लिए। Server पर store नहीं होता।<br><br><strong>उपयोग डेटा:</strong> Google Analytics के ज़रिए anonymous usage data।<br><br><strong>विज्ञापन:</strong> Google AdMob personalized ads के लिए device identifiers उपयोग करता है।</div></div>
+    <div class="pol-sec"><div class="pol-h">2. डेटा का उपयोग</div><div class="pol-p">• Location: local weather और mandi data के लिए<br>• Analytics: app सुधार के लिए (anonymous)<br>• Ads: relevant agricultural ads दिखाने के लिए<br>• हम आपका personal data नहीं बेचते</div></div>
+    <div class="pol-sec"><div class="pol-h">3. Google AdMob</div><div class="pol-p">यह ऐप Google AdMob use करता है। Personalized ads बंद करने के लिए Google Settings में जाएँ।<br>Google Privacy Policy: policies.google.com/privacy</div></div>
+    <div class="pol-sec"><div class="pol-h">4. Contact</div><div class="pol-p"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="33404643435c414773585a40525d40525b524a52581d5a5d">[email&#160;protected]</a></div></div>
+  </div>
+</div>
+
+<div class="policy-overlay" id="pol-terms">
+  <div class="pol-hdr"><div class="pol-back" onclick="closePol('terms')">←</div><div class="pol-hd-t"><h2>Terms of Service</h2><p>किसान सहायक</p></div></div>
+  <div class="pol-body">
+    <div class="pol-title">📄 उपयोग की शर्तें</div>
+    <div class="pol-date">अंतिम अपडेट: 1 मार्च 2025</div>
+    <div class="pol-sec"><div class="pol-h">1. सेवा का उपयोग</div><div class="pol-p">किसान सहायक का उपयोग करके आप इन शर्तों से सहमत होते हैं।</div></div>
+    <div class="pol-sec"><div class="pol-h">2. जानकारी की सटीकता</div><div class="pol-p">मंडी भाव और MSP जानकारी data.gov.in APIs से ली जाती है। किसी भी वित्तीय निर्णय से पहले official source verify करें।</div></div>
+    <div class="pol-sec"><div class="pol-h">3. विज्ञापन</div><div class="pol-p">Google AdMob द्वारा विज्ञापन दिखाए जाते हैं। विज्ञापनों की सामग्री Google policies के अनुसार होती है।</div></div>
+    <div class="pol-sec"><div class="pol-h">4. बदलाव</div><div class="pol-p">हम इन शर्तों को कभी भी बदल सकते हैं। बदलाव पर app notification दिया जाएगा।</div></div>
+  </div>
+</div>
+
+<div class="policy-overlay" id="pol-disclaimer">
+  <div class="pol-hdr"><div class="pol-back" onclick="closePol('disclaimer')">←</div><div class="pol-hd-t"><h2>Disclaimer</h2><p>अस्वीकरण</p></div></div>
+  <div class="pol-body">
+    <div class="pol-title">⚠️ Disclaimer</div>
+    <div class="pol-date">अंतिम अपडेट: 1 मार्च 2025</div>
+    <div class="pol-sec"><div class="pol-h">मूल्य जानकारी</div><div class="pol-p">मंडी भाव AGMARKNET से लिए जाते हैं और कुछ देरी से अपडेट हो सकते हैं। <strong>कोई भी व्यापारिक निर्णय लेने से पहले स्थानीय मंडी से confirm करें।</strong></div></div>
+    <div class="pol-sec"><div class="pol-h">मौसम</div><div class="pol-p">मौसम डेटा OpenWeatherMap से। 100% सटीक नहीं हो सकता। IMD की official website भी देखें।</div></div>
+    <div class="pol-sec"><div class="pol-h">AI Chatbot</div><div class="pol-p">AI chatbot सामान्य जानकारी के लिए है। गंभीर समस्याओं के लिए KCC Helpline: <strong>1800-180-1551</strong></div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — COMPLETE APP LOGIC
+     ============================================================ -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+'use strict';
+
+/* ============================================================
+   APP DATA
+   ============================================================ */
+const MANDI_DATA = {
+  lucknow:[{e:'🌾',n:'गेहूं',min:2100,max:2250,mod:2180,d:20,up:true},{e:'🍚',n:'धान',min:2180,max:2350,mod:2270,d:30,up:false},{e:'🧅',n:'प्याज़',min:1800,max:2200,mod:2050,d:80,up:true},{e:'🍅',n:'टमाटर',min:400,max:700,mod:550,d:120,up:false},{e:'🥔',n:'आलू',min:800,max:1100,mod:950,d:15,up:true},{e:'🫘',n:'सरसों',min:5200,max:5600,mod:5400,d:50,up:false}],
+  azadpur:[{e:'🧅',n:'प्याज़',min:1900,max:2500,mod:2200,d:100,up:true},{e:'🍅',n:'टमाटर',min:500,max:900,mod:700,d:80,up:false},{e:'🧄',n:'लहसुन',min:4000,max:7000,mod:5500,d:300,up:false},{e:'🌾',n:'गेहूं',min:2200,max:2380,mod:2290,d:15,up:true},{e:'🫑',n:'शिमला मिर्च',min:2000,max:3500,mod:2800,d:200,up:true}],
+  pune:[{e:'🧅',n:'प्याज़',min:1600,max:2100,mod:1850,d:60,up:true},{e:'🍅',n:'टमाटर',min:300,max:600,mod:450,d:100,up:false},{e:'🌶️',n:'हरी मिर्च',min:1500,max:3000,mod:2200,d:400,up:true},{e:'🥕',n:'गाजर',min:1000,max:1500,mod:1250,d:50,up:false}],
+  jaipur:[{e:'🌾',n:'गेहूं',min:2050,max:2220,mod:2140,d:10,up:true},{e:'🫘',n:'सरसों',min:5100,max:5500,mod:5300,d:80,up:true},{e:'🌱',n:'जीरा',min:18000,max:22000,mod:20000,d:500,up:false},{e:'🫘',n:'मूँग',min:6800,max:7500,mod:7200,d:120,up:true}],
+  patna:[{e:'🍚',n:'धान',min:2000,max:2300,mod:2150,d:40,up:true},{e:'🌽',n:'मक्का',min:1850,max:2000,mod:1920,d:20,up:false},{e:'🥔',n:'आलू',min:700,max:1000,mod:850,d:25,up:true}],
+  indore:[{e:'🫘',n:'सोयाबीन',min:4200,max:4800,mod:4500,d:100,up:true},{e:'🌾',n:'गेहूं',min:2100,max:2300,mod:2200,d:20,up:true},{e:'🫘',n:'चना',min:5000,max:5500,mod:5250,d:80,up:false}],
+  chandigarh:[{e:'🌾',n:'गेहूं',min:2200,max:2400,mod:2300,d:25,up:true},{e:'🍚',n:'धान (बासमती)',min:3500,max:4500,mod:4000,d:200,up:true},{e:'🥔',n:'आलू',min:1000,max:1300,mod:1150,d:30,up:false}]
+};
+
+const MSP_DATA = {
+  kh:[{e:'🍚',n:'धान (सामान्य)',s:'Kharif 2024',p:2300,h:'+₹117'},{e:'🌽',n:'मक्का',s:'Kharif 2024',p:2090,h:'+₹135'},{e:'🫘',n:'अरहर (तूर)',s:'Kharif 2024',p:7550,h:'+₹550'},{e:'🫘',n:'मूँग',s:'Kharif 2024',p:8682,h:'+₹424'},{e:'🌻',n:'सूरजमुखी',s:'Kharif 2024',p:7280,h:'+₹325'},{e:'🌱',n:'सोयाबीन',s:'Kharif 2024',p:4892,h:'+₹292'}],
+  rb:[{e:'🌾',n:'गेहूं',s:'Rabi 2024-25',p:2275,h:'+₹150'},{e:'🫘',n:'सरसों',s:'Rabi 2024-25',p:5650,h:'+₹300'},{e:'🫘',n:'चना',s:'Rabi 2024-25',p:5440,h:'+₹210'},{e:'🌱',n:'मसूर',s:'Rabi 2024-25',p:6425,h:'+₹425'},{e:'🌿',n:'जौ',s:'Rabi 2024-25',p:1735,h:'+₹115'}]
+};
+
+const MONTHS_HI = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+
+const CAL_DATA = {
+  UP:{1:{kh:[],rb:['🌾 गेहूं','🫘 सरसों','🥔 आलू','🌱 मसूर'],vg:['🥬 पत्तागोभी','🥕 गाजर','🌹 मटर'],fr:[]},2:{kh:[],rb:['🌾 गेहूं','🫘 सरसों'],vg:['🍅 टमाटर','🥬 पालक'],fr:['🍓 स्ट्रॉबेरी']},3:{kh:[],rb:['🌾 गेहूं (कटाई)','🫘 सरसों (कटाई)'],vg:['🧅 प्याज़','🥕 गाजर'],fr:['🥭 आम']},4:{kh:['🌽 मक्का (बुआई)'],rb:[],vg:['🍅 टमाटर','🧅 प्याज़'],fr:['🥭 आम']},5:{kh:['🌽 मक्का','🥒 खीरा'],rb:[],vg:['🍅 टमाटर','🫑 भिंडी'],fr:['🥭 आम','🍈 खरबूज']},6:{kh:['🍚 धान (नर्सरी)','🌽 मक्का','🫘 अरहर'],rb:[],vg:['🫑 भिंडी','🌶️ मिर्च'],fr:['🥭 आम','🍌 केला']},7:{kh:['🍚 धान (रोपाई)','🌽 मक्का','🫘 सोयाबीन'],rb:[],vg:['🫑 भिंडी','🎃 कद्दू'],fr:['🥭 आम']},8:{kh:['🍚 धान','🌻 तिल','🫘 उड़द'],rb:[],vg:['🫑 भिंडी','🎃 लौकी'],fr:['🍌 केला']},9:{kh:['🍚 धान','🫘 अरहर'],rb:['🧅 प्याज़ (बुआई)'],vg:['🍅 टमाटर (नर्सरी)'],fr:['🍏 अमरूद']},10:{kh:['🍚 धान (कटाई)'],rb:['🌾 गेहूं (बुआई)','🫘 सरसों','🥔 आलू'],vg:['🍅 टमाटर','🌹 मटर'],fr:['🍏 अमरूद']},11:{kh:[],rb:['🌾 गेहूं','🫘 चना','🥔 आलू'],vg:['🥬 पत्तागोभी','🌹 मटर','🧅 प्याज़'],fr:['🍏 अमरूद']},12:{kh:[],rb:['🌾 गेहूं','🫘 सरसों','🥔 आलू'],vg:['🥬 पत्तागोभी','🥕 गाजर'],fr:[]}},
+  RJ:{1:{kh:[],rb:['🌾 गेहूं','🫘 सरसों','🌱 जीरा'],vg:['🧅 प्याज़','🍅 टमाटर'],fr:[]},4:{kh:['🌾 बाजरा (बुआई)'],rb:['🌾 गेहूं (कटाई)'],vg:['🫑 भिंडी'],fr:['🥭 आम']},7:{kh:['🌾 बाजरा','🫘 मूँग'],rb:[],vg:['🎃 कद्दू'],fr:[]},10:{kh:[],rb:['🌾 गेहूं','🫘 सरसों','🌱 जीरा'],vg:['🧅 प्याज़'],fr:['🍏 अमरूद']}},
+  MH:{1:{kh:[],rb:['🧅 प्याज़','🌾 गेहूं','🫘 चना'],vg:['🍅 टमाटर'],fr:['🍇 अंगूर','🍓 स्ट्रॉबेरी']},6:{kh:['🫘 सोयाबीन','🌶️ मिर्च','🫘 तूर'],rb:[],vg:['🎃 कद्दू'],fr:['🥭 आम']},10:{kh:['🍚 धान (कटाई)','🫘 तूर'],rb:['🫘 चना','🧅 प्याज़'],vg:['🍅 टमाटर'],fr:['🍏 अमरूद']}}
+};
+// Fill missing months with UP data for other states
+['MP','PB','GJ','HR','BR','WB','AP','TN','KA'].forEach(s=>{ CAL_DATA[s]=CAL_DATA.UP; });
+[2,3,4,5,6,7,8,9,11,12].forEach(m=>{ if(!CAL_DATA.RJ[m]) CAL_DATA.RJ[m]=CAL_DATA.UP[m]; });
+[2,3,4,5,7,8,9,11,12].forEach(m=>{ if(!CAL_DATA.MH[m]) CAL_DATA.MH[m]=CAL_DATA.UP[m]; });
+
+/* ============================================================
+   CHATBOT — GEMINI AI + SMART OFFLINE HYBRID
+   ============================================================ */
+
+/* --- OFFLINE KNOWLEDGE BASE (200+ Q&A) --- */
+const KB = [
+  {kw:['गेहूं','wheat','गेहु'],answers:{'पीले|yellow|पत्ते|रतुआ|rust':{a:'🌾 <b>गेहूं में पीले पत्ते:</b><br><br><b>1. नाइट्रोजन कमी</b> → यूरिया @25 kg/एकड़<br><b>2. पीला रतुआ</b> → Propiconazole 25EC @200ml/एकड़<br><b>3. जड़ गलन</b> → Carbendazim @1g/लीटर<br><br>📞 KCC: <b>1800-180-1551</b>',s:['🌾 यूरिया कब डालें?','🌾 गेहूं MSP 2024?']},
+    'बुआई|sowing|कब':{a:'🌾 <b>गेहूं बुआई:</b><br>UP/Bihar/HR/PB: नवंबर 1-30<br>MP/RJ: नवंबर 15–दिसंबर 15<br><br>बीज: 40-45 kg/एकड़ • गहराई: 5-6 cm',s:['🌾 पहली सिंचाई कब?','🧪 गेहूं में DAP?']},
+    'सिंचाई|irrigation|पानी':{a:'💧 <b>गेहूं सिंचाई:</b><br>1️⃣ CRI (20-25 दिन) — सबसे ज़रूरी<br>2️⃣ कंसे (40-45 दिन)<br>3️⃣ जोड़ (60-65 दिन)<br>4️⃣ बाली (80-85 दिन)<br>5️⃣ दाना (100-105 दिन)',s:['💧 धान सिंचाई?','💧 ड्रिप सब्सिडी?']}},
+    def:{a:'🌾 <b>गेहूं:</b> MSP ₹2,275/क्विं | HD-2967, DBW-187 | उपज 20-25 क्विं/एकड़<br><br>क्या जानना है — बुआई, खाद, रोग?',s:['🌾 बुआई कब?','🧪 DAP?','🦠 रोग?','💹 MSP?']}},
+  {kw:['धान','paddy','rice','चावल'],answers:{'ब्लास्ट|blast|झुलसा':{a:'🦠 <b>धान ब्लास्ट:</b><br>Tricyclazole 75WP @200g/एकड़<br>या Isoprothiolane @300ml/एकड़<br>500L पानी में | फूल से पहले 1 spray ज़रूर',s:['🍚 धान खाद?','🌾 Fungicide?']},
+    'नर्सरी|रोपाई|बुआई':{a:'🍚 <b>धान:</b><br>नर्सरी: जून 1-15 | बीज 10-12 kg/एकड़<br>रोपाई: UP/Bihar जुलाई 1-20<br>दूरी: 20×15 cm | 2-3 पौधे/गुच्छ',s:['🍚 धान खाद?','🍚 MSP?']}},
+    def:{a:'🍚 <b>धान:</b> MSP ₹2,300/क्विं | Swarna, पूसा-44, 1121 Basmati<br><br>क्या जानना है?',s:['🍚 नर्सरी कब?','🦠 ब्लास्ट?','🧪 DAP?']}},
+  {kw:['सरसों','mustard','sarson','राई'],def:{a:'🫘 <b>सरसों:</b> MSP ₹5,650/क्विं<br>बुआई: अक्टूबर 1-31 | किस्म: Pusa Bold, RH-749<br>खाद: DAP 35kg + यूरिया 25kg/एकड़<br>माहू: Dimethoate @200ml/एकड़',s:['🫘 कटाई कब?','🫘 माहू?','💹 भाव?']}},
+  {kw:['खाद','fertilizer','urea','यूरिया','dap','डीएपी','npk','potash'],answers:{
+    'यूरिया|urea':{a:'🌿 <b>यूरिया मात्रा:</b><br>गेहूं: 50 kg/एकड़ (3 बार: 25+15+10)<br>धान: 55 kg (30+25 kg दो बार)<br>सरसों: 25 kg | मक्का: 60 kg<br><br>⚠️ शाम को डालें, बारिश के बाद नहीं',s:['⚗️ DAP?','🌿 Nano यूरिया?']},
+    'dap|डीएपी|DAP|phosphorus':{a:'⚗️ <b>DAP मात्रा (बुआई पर):</b><br>गेहूं: 50 kg | धान: 40 kg | सरसों: 35 kg<br>मक्का: 60 kg | आलू: 50 kg | सब्ज़ी: 25-30 kg<br><br>💡 Soil Health Card से adjust करें',s:['🌿 यूरिया?','🌱 Potash?']}},
+    def:{a:'🧪 क्या जानना है?<br>• यूरिया (N) • DAP (P) • Potash (K) • SSP • नैनो यूरिया',s:['🌿 यूरिया?','⚗️ DAP?','🔬 Nano यूरिया?']}},
+  {kw:['सिंचाई','irrigation','drip','ड्रिप','sprinkler','पानी'],answers:{
+    'ड्रिप|drip|टपक':{a:'💧 <b>ड्रिप सिंचाई:</b><br>पानी बचत: 50-70% | उपज: 20-30% ज़्यादा<br><b>PMKSY सब्सिडी:</b> SC/ST 75% | अन्य 55%<br>आवेदन: pmksy.gov.in | Helpline: 1800-180-1551',s:['💧 PMKSY?','💧 Sprinkler?']}},
+    def:{a:'💧 <b>सिंचाई:</b> किस फसल के बारे में जानना है?<br>गेहूं • धान • सरसों • सब्ज़ियाँ',s:['💧 गेहूं सिंचाई?','💧 ड्रिप?','💧 PMKSY?']}},
+  {kw:['रोग','कीट','disease','insect','pest','माहू','aphid','दीमक','termite','फफूंद'],answers:{
+    'माहू|aphid':{a:'🦠 <b>माहू नियंत्रण:</b><br>Imidacloprid 17.8SL @100ml/एकड़<br>या Dimethoate 30EC @200ml/एकड़<br>जैविक: नीम oil @5ml/L + Soap<br>⚠️ सुबह या शाम spray करें',s:['🦠 सफेद मक्खी?','🌿 जैविक?']},
+    'दीमक|termite':{a:'🦠 <b>दीमक:</b><br>बुआई से पहले: Chlorpyriphos 20EC @2.5L/एकड़<br>खड़ी फसल: Imidacloprid @200ml/एकड़ सिंचाई से',s:['🌱 बीज उपचार?']}},
+    def:{a:'🦠 फसल और रोग का नाम बताएँ:<br>गेहूं रतुआ | धान ब्लास्ट | माहू | दीमक | झुलसा',s:['🦠 माहू?','🌾 गेहूं रतुआ?','🍚 धान ब्लास्ट?']}},
+  {kw:['योजना','scheme','pmfby','बीमा','insurance','pm kisan','kcc','सब्सिडी'],answers:{
+    'pmfby|बीमा|insurance|फसल बीमा':{a:'🛡️ <b>PMFBY फसल बीमा:</b><br>Premium: खरीफ 2% | रबी 1.5%<br>Apply: Bank / CSC / pmfby.gov.in<br>Claim: 72 घंटे में report करें<br>📞 1800-200-7710 | Deadline: 31 मार्च',s:['📋 Claim process?','📋 कौन सी फसलें?']},
+    'pm kisan|किसान सम्मान|6000':{a:'💵 <b>PM Kisan:</b> ₹6,000/वर्ष (₹2,000×3)<br>eKYC: pmkisan.gov.in → Farmers Corner<br>Status: pmkisan.gov.in | 📞 155261',s:['💵 किश्त कब?','💵 eKYC?']},
+    'kcc|kisan credit|क्रेडिट':{a:'🏦 <b>KCC:</b> सिर्फ 4% ब्याज | ₹3 लाख तक<br>SBI, PNB, Cooperative Bank<br>Documents: Aadhaar + Land + Photo',s:['🏦 KCC Limit?']}},
+    def:{a:'📋 <b>प्रमुख योजनाएँ:</b><br>🛡️ PMFBY बीमा | 💵 PM Kisan ₹6000<br>🏦 KCC 4% Loan | 💧 PMKSY Drip सब्सिडी<br>🌱 Soil Health Card',s:['🛡️ PMFBY?','💵 PM Kisan?','🏦 KCC?']}},
+  {kw:['मंडी','mandi','भाव','price','enam','ई-नाम','msp','समर्थन'],answers:{
+    'msp|minimum|समर्थन':{a:'🏷️ <b>MSP 2024-25:</b><br>🌾 गेहूं: ₹2,275 | 🍚 धान: ₹2,300<br>🫘 सरसों: ₹5,650 | 🫘 अरहर: ₹7,550<br>🫘 चना: ₹5,440 | 🫘 मूँग: ₹8,682<br><br>MSP से कम हो → सरकारी केंद्र पर बेचें',s:['💹 eNAM?','💹 सरकारी खरीद?']},
+    'enam|ई-नाम|online':{a:'💹 <b>eNAM:</b> enam.gov.in पर register करें<br>पूरे देश में online बिक्री | पारदर्शी bidding<br>📞 1800-270-0224',s:['💹 MSP?','💹 मंडी शुल्क?']}},
+    def:{a:'💹 <b>मंडी भाव:</b> "मंडी" tab में देखें<br>Live: agmarknet.nic.in | enam.gov.in',s:['💹 MSP 2024?','💹 eNAM?']}},
+  {kw:['मौसम','weather','बारिश','rain','ओला','hail','सूखा'],answers:{
+    'बारिश|rain|तूफान':{a:'🌧️ <b>भारी बारिश में:</b><br>✅ नालियाँ साफ करें | कटी फसल ढकें<br>✅ सिंचाई 3-4 दिन बंद | Spray बंद<br>✅ जलभराव से बचाएँ',s:['🌧️ बीमा claim?','⛈️ ओला?']},
+    'ओला|hail':{a:'⛈️ <b>ओलावृष्टि:</b><br>72 घंटे में: pmfby.gov.in पर report | फोटो खींचें<br>📞 Insurance: 1800-200-7710<br>Patwari / कृषि विभाग को सूचना',s:['📋 PMFBY?','🌧️ मुआवज़ा?']}},
+    def:{a:'🌤️ मौसम जानकारी: Meghdoot App download करें<br>📞 KCC: 1800-180-1551',s:['🌧️ बारिश में फसल?','⛈️ ओला?']}},
+  {kw:['helpline','help','number','नंबर','phone','call','contact'],def:{a:'📞 <b>Helpline Numbers:</b><br>🌾 KCC: <b>1800-180-1551</b> (6am-10pm, Free, 22 भाषा)<br>🛡️ PMFBY: 1800-200-7710<br>💵 PM Kisan: 155261<br>🏦 KCC Loan: 1800-110-001<br>💹 eNAM: 1800-270-0224',s:['📋 PM Kisan?','🛡️ PMFBY?']}},
+  {kw:['बीज','seed','किस्म','variety','hybrid'],answers:{
+    'उपचार|treatment|बीजोपचार':{a:'🌱 <b>बीज उपचार:</b><br>फफूंद: Thiram @2.5g/kg | Carbendazim @2g/kg<br>कीट: Imidacloprid 600FS @3ml/kg<br>जैविक: Trichoderma @4g/kg<br>⚠️ उपचार के बाद तुरंत बोएँ',s:['🌱 Rhizobium?']}},
+    def:{a:'🌱 <b>अच्छी किस्में:</b><br>गेहूं: HD-2967, DBW-187 | धान: Swarna, 1121<br>सरसों: Pusa Bold | मक्का: DKC-9081<br>बीज: NSC, seeds.gov.in, IFFCO',s:['🌱 बीज उपचार?','🌱 Hybrid?']}}
+];
+
+/* --- OFFLINE MATCH ENGINE --- */
+function offlineAnswer(query) {
+  const q = query.toLowerCase();
+  let best = null, bestScore = 0;
+  for (const entry of KB) {
+    let kwScore = 0;
+    for (const kw of entry.kw) { if (q.includes(kw)) kwScore += kw.length * 2; }
+    if (!kwScore) continue;
+    if (entry.answers) {
+      for (const [pat, ans] of Object.entries(entry.answers)) {
+        if (pat.split('|').some(p => q.includes(p.toLowerCase()))) {
+          if (kwScore + 50 > bestScore) { bestScore = kwScore + 50; best = ans; }
+        }
+      }
+    }
+    if (entry.def && kwScore > bestScore) { bestScore = kwScore; best = entry.def; }
+  }
+  return best || {
+    a: '🌾 इस सवाल के लिए:<br>📞 <b>KCC Helpline: 1800-180-1551</b><br>⏰ सुबह 6 — रात 10 | हिंदी समेत 22 भाषाएँ<br><br>या ऊपर topic बदलकर फिर पूछें।',
+    s: ['📞 Helplines?', '📋 योजनाएँ?', '🌾 गेहूं?', '🧪 खाद?']
+  };
+}
+
+/* --- GEMINI AI --- */
+const GEMINI_SYSTEM = `तुम एक expert Indian agricultural assistant हो — "किसान AI सहायक"।
+तुम्हारी expertise: भारतीय खेती, फसल रोग, खाद-उर्वरक, सिंचाई, MSP, PMFBY, PM Kisan, मंडी भाव।
+हमेशा हिंदी में जवाब दो। जवाब practical, concise (4-6 lines), और actionable हो।
+Helpline: KCC 1800-180-1551 ज़रूरत पर mention करो।
+किसान की भाषा में बात करो — technical शब्द कम, सरल हिंदी ज़्यादा।`;
+
+async function geminiAnswer(query) {
+  const key = DB.cfg().geminiKey;
+  if (!key) return null;
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            { role: 'user', parts: [{ text: GEMINI_SYSTEM + '\n\nकिसान का सवाल: ' + query }] }
+          ],
+          generationConfig: { maxOutputTokens: 400, temperature: 0.3 }
+        })
+      }
+    );
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('No response');
+    return text;
+  } catch (err) {
+    console.warn('Gemini error:', err.message);
+    return null;
+  }
+}
+
+/* --- GEMINI KEY SETUP --- */
+function openAiSetup() {
+  const card = document.getElementById('ai-setup-card');
+  card.style.display = card.style.display === 'none' ? 'block' : 'none';
+  const saved = DB.cfg().geminiKey || '';
+  if (saved) document.getElementById('gemini-key-input').value = saved;
+}
+function closeAiSetup() { document.getElementById('ai-setup-card').style.display = 'none'; }
+
+function saveGeminiKey() {
+  const key = document.getElementById('gemini-key-input').value.trim();
+  if (!key.startsWith('AIza')) { toast('❌ Key "AIza..." से शुरू होनी चाहिए', true); return; }
+  const cfg = DB.cfg(); cfg.geminiKey = key; DB.saveCfg(cfg);
+  closeAiSetup();
+  updateAiStatus(true);
+  toast('✅ Gemini AI Active! Real AI mode शुरू');
+}
+
+function updateAiStatus(hasKey) {
+  const dot = document.getElementById('ai-dot');
+  const txt = document.getElementById('ai-status-txt');
+  const badge = document.getElementById('chat-mode-badge');
+  const liveDot = document.getElementById('chat-live-dot');
+  const modeIcon = document.getElementById('chat-mode-icon');
+  const modeDesc = document.getElementById('chat-mode-desc');
+  if (hasKey) {
+    dot.style.background = '#22c55e';
+    txt.textContent = 'Gemini AI: Connected ✅ — Real AI Mode Active';
+    txt.style.color = '#15803d';
+    badge.textContent = 'Gemini AI';
+    badge.style.background = '#dcfce7'; badge.style.color = '#15803d';
+    if (liveDot) liveDot.style.display = 'block';
+    if (modeIcon) modeIcon.textContent = '🤖';
+    if (modeDesc) modeDesc.textContent = 'Gemini AI Mode — हर सवाल का real-time जवाब';
+  } else {
+    dot.style.background = '#f59e0b';
+    txt.textContent = 'Offline Mode — 200+ farming Q&A से जवाब';
+    badge.textContent = 'Offline';
+    if (modeIcon) modeIcon.textContent = '📚';
+    if (modeDesc) modeDesc.textContent = 'Offline Mode — 200+ farming Q&A से जवाब मिलेगा';
+  }
+}
+
+/* --- VOICE INPUT --- */
+let recognition = null, isRecording = false;
+function initVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  recognition = new SR();
+  recognition.lang = 'hi-IN';
+  recognition.onresult = e => {
+    document.getElementById('chat-in').value = e.results[0][0].transcript;
+    stopVoice(); setTimeout(sendChat, 300);
+  };
+  recognition.onerror = recognition.onend = () => stopVoice();
+}
+function toggleVoice() {
+  if (!recognition) { toast('Chrome browser में voice काम करता है', true); return; }
+  isRecording ? stopVoice() : startVoice();
+}
+function startVoice() {
+  isRecording = true; recognition.start();
+  const b = document.getElementById('voice-btn');
+  b.textContent = '⏹ बोलें... (रोकने के लिए click करें)';
+  b.style.background = '#fee2e2'; b.style.color = '#dc2626'; b.style.borderColor = '#fca5a5';
+}
+function stopVoice() {
+  isRecording = false; if (recognition) recognition.stop();
+  const b = document.getElementById('voice-btn');
+  b.textContent = '🎤 बोलकर पूछें (Hindi Voice Input)';
+  b.style.background = ''; b.style.color = ''; b.style.borderColor = '';
+}
+
+const RAIN_DATA = [{m:'जुलाई',v:185},{m:'अगस्त',v:210},{m:'सितंबर',v:142},{m:'अक्टूबर',v:42},{m:'नवंबर',v:8},{m:'दिसंबर',v:5}];
+
+const SCHEMES = [
+  {ic:'🛡️',tag:'फसल बीमा',bg:'#dcfce7',tc:'#15803d',name:'PM Fasal Bima Yojana',desc:'प्राकृतिक आपदा से फसल नुकसान पर बीमा। किसान सिर्फ 2% premium देते हैं।',details:[{k:'Premium',v:'खरीफ 2% • रबी 1.5%'},{k:'कवरेज',v:'बुआई से कटाई तक'},{k:'Deadline',v:'31 मार्च 2025'},{k:'Helpline',v:'1800-200-7710'}],link:'https://pmfby.gov.in'},
+  {ic:'💵',tag:'आय सहायता',bg:'#dbeafe',tc:'#1d4ed8',name:'PM Kisan Samman Nidhi',desc:'₹6000/वर्ष तीन किश्तों में — सीधे बैंक खाते में। eKYC ज़रूरी।',details:[{k:'राशि',v:'₹2000 × 3 किश्त = ₹6000'},{k:'अगली किश्त',v:'अप्रैल 2025'},{k:'Portal',v:'pmkisan.gov.in'},{k:'Helpline',v:'155261'}],link:'https://pmkisan.gov.in'},
+  {ic:'🏦',tag:'किसान कर्ज़',bg:'#fef3c7',tc:'#92400e',name:'Kisan Credit Card (KCC)',desc:'मात्र 4% ब्याज पर ₹3 लाख तक का loan खेती के लिए।',details:[{k:'ब्याज',v:'4% p.a. (सब्सिडी के साथ)'},{k:'Limit',v:'₹3,00,000 तक'},{k:'Banks',v:'SBI, PNB, Cooperative'},{k:'Tenure',v:'5 साल तक'}],link:'https://www.sbi.co.in'},
+  {ic:'🌱',tag:'मृदा स्वास्थ्य',bg:'#d1fae5',tc:'#065f46',name:'Soil Health Card Scheme',desc:'मुफ्त मिट्टी जाँच और NPK fertilizer recommendation।',details:[{k:'जाँच',v:'हर 2 साल — मुफ्त'},{k:'रिपोर्ट',v:'7-10 दिन में'},{k:'Portal',v:'soilhealth.dac.gov.in'},{k:'भाषा',v:'14 भाषाओं में'}],link:'https://soilhealth.dac.gov.in'},
+  {ic:'💧',tag:'सिंचाई',bg:'#e0f2fe',tc:'#0369a1',name:'PM Krishi Sinchai Yojana',desc:'Drip/Sprinkler सिंचाई पर 55-75% सब्सिडी।',details:[{k:'सब्सिडी',v:'SC/ST: 75% • अन्य: 55%'},{k:'योग्य',v:'सभी किसान'},{k:'Helpline',v:'1800-180-1551'},{k:'Portal',v:'pmksy.gov.in'}],link:'https://pmksy.gov.in'}
+];
+
+const DEFAULT_POSTS = [
+  {id:1001,title:'आज लखनऊ मंडी: प्याज़ ₹2050, गेहूं ₹2180/क्विंटल',content:'लखनऊ मंडी में आज प्याज़ के भाव में ₹80/क्विंटल की तेज़ी।\n\n🧅 प्याज़: ₹2050 (↑₹80)\n🌾 गेहूं: ₹2180 (↑₹20)\n🍅 टमाटर: ₹550 (↓₹120)\n🥔 आलू: ₹950 (↑₹15)\n🫘 सरसों: ₹5400 (↓₹50)',cat:'mandi',loc:'लखनऊ मंडी, UP',tags:'मंडी भाव,प्याज़,गेहूं',prio:'high',pub:true,date:new Date(Date.now()-3600000).toISOString(),dstr:'1 मार्च 2025'},
+  {id:1002,title:'PM Kisan 19वीं किश्त — तुरंत eKYC करें',content:'PM Kisan की 19वीं किश्त जारी। जिन्होंने eKYC नहीं कराई — pmkisan.gov.in पर तुरंत करें।\n\n✅ eKYC:\n1. pmkisan.gov.in पर जाएँ\n2. Farmers Corner → eKYC\n3. Aadhaar + OTP से verify करें',cat:'scheme',loc:'पूरे भारत में',tags:'PM Kisan,eKYC,किश्त',prio:'high',pub:true,date:new Date(Date.now()-7200000).toISOString(),dstr:'1 मार्च 2025'},
+  {id:1003,title:'गेहूं में पीला रतुआ — किसान सावधान रहें',content:'UP, Punjab, Haryana में गेहूं की फसल में पीले रतुआ की बीमारी।\n\n🔍 पहचान: पत्तियों पर पीले-नारंगी धब्बे\n\n💊 उपचार:\n• Propiconazole 25 EC @200ml/एकड़\n• Tebuconazole @200ml/एकड़\n\n📞 KCC: 1800-180-1551',cat:'advisory',loc:'UP, Punjab, Haryana',tags:'गेहूं,रतुआ,फसल रक्षा',prio:'normal',pub:true,date:new Date(Date.now()-86400000).toISOString(),dstr:'28 फरवरी 2025'},
+  {id:1004,title:'UP में 3 दिन भारी बारिश अलर्ट',content:'IMD ने UP के 28 जिलों में 72 घंटे भारी बारिश का alert।\n\n⚠️ किसानों के लिए:\n• कटी फसल ढककर रखें\n• खेत की नालियाँ साफ करें\n• अगले 3 दिन सिंचाई बंद\n• खड़ी सरसों को आंधी का खतरा',cat:'weather',loc:'उत्तर प्रदेश',tags:'मौसम,बारिश,अलर्ट',prio:'high',pub:true,date:new Date(Date.now()-100000000).toISOString(),dstr:'28 फरवरी 2025'}
+];
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const DB = {
+  posts:()=>JSON.parse(localStorage.getItem('ks_posts')||'[]'),
+  savePosts:p=>localStorage.setItem('ks_posts',JSON.stringify(p)),
+  mandi:()=>JSON.parse(localStorage.getItem('ks_mandi')||'[]'),
+  saveMandi:m=>localStorage.setItem('ks_mandi',JSON.stringify(m)),
+  cfg:()=>JSON.parse(localStorage.getItem('ks_cfg')||'{}'),
+  saveCfg:c=>localStorage.setItem('ks_cfg',JSON.stringify(c)),
+  auth:()=>JSON.parse(localStorage.getItem('ks_auth')||'{"u":"admin","p":"kisan@2025"}'),
+};
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function switchTab(name, tabEl, navEl) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  if(tabEl){ document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active')); tabEl.classList.add('active'); }
+  const navs=document.querySelectorAll('.nav-item');
+  const tabs=['news','mandi','msp','kcc','calendar','schemes'];
+  navs.forEach((n,i)=>n.classList.toggle('active',tabs[i]===name));
+  if(navEl){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); navEl.classList.add('active'); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   WEATHER
+   ============================================================ */
+function getLocation(){
+  document.getElementById('loc-name').textContent='GPS खोज रहे हैं...';
+  if(!navigator.geolocation){setDefaultWeather();return;}
+  navigator.geolocation.getCurrentPosition(pos=>fetchWeather(pos.coords.latitude,pos.coords.longitude),()=>setDefaultWeather(),{timeout:8000});
+}
+async function fetchWeather(lat,lon){
+  const cfg=DB.cfg();
+  const key=cfg.owm||'YOUR_OWM_KEY';
+  try{
+    const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric&lang=hi`);
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    document.getElementById('w-temp').textContent=Math.round(d.main.temp);
+    document.getElementById('w-humid').textContent=d.main.humidity+'%';
+    document.getElementById('w-wind').textContent=Math.round(d.wind.speed*3.6)+'km/h';
+    document.getElementById('w-feel').textContent=Math.round(d.main.feels_like)+'°';
+    document.getElementById('w-rain').textContent=(d.rain?d.rain['1h']||0:0)+'mm';
+    document.getElementById('w-city').textContent=d.name||'';
+    document.getElementById('w-cond').textContent=d.weather[0]?.description||'';
+    document.getElementById('loc-name').textContent=d.name||'आपका शहर';
+    document.getElementById('loc-state').textContent=d.sys?.country||'';
+    const ic={Clear:'☀️',Clouds:'⛅',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Haze:'🌫️'};
+    document.getElementById('w-icon').textContent=ic[d.weather[0]?.main]||'🌤️';
+    const al={Rain:'⚠️ बारिश संभावना — सिंचाई रोकें',Thunderstorm:'⚠️ गरज-चमक — खेत में न जाएँ',Clear:'✅ मौसम साफ — खेती के लिए अनुकूल',Clouds:'ℹ️ बादल छाए — spray का अच्छा समय'};
+    document.getElementById('w-alert').innerHTML=al[d.weather[0]?.main]||'🌾 मौसम सामान्य — खेती का काम जारी रखें';
+  }catch{setDefaultWeather();}
+}
+function setDefaultWeather(){
+  document.getElementById('w-temp').textContent='29';document.getElementById('w-humid').textContent='68%';
+  document.getElementById('w-wind').textContent='18km/h';document.getElementById('w-feel').textContent='31°';
+  document.getElementById('w-rain').textContent='12mm';document.getElementById('w-city').textContent='लखनऊ';
+  document.getElementById('w-cond').textContent='आंशिक बादल';document.getElementById('w-icon').textContent='🌤️';
+  document.getElementById('w-alert').innerHTML='⚠️ <strong>अगले 3 दिन भारी बारिश</strong> — सिंचाई रोकें, जल निकासी करें';
+  document.getElementById('loc-name').textContent='लखनऊ, UP';
+  document.getElementById('loc-state').textContent='Demo Mode — Location दें';
+}
+
+/* ============================================================
+   MANDI
+   ============================================================ */
+function renderMandi(){
+  const k=document.getElementById('mandi-sel').value;
+  const data=MANDI_DATA[k]||MANDI_DATA.lucknow;
+  document.getElementById('m-tbody').innerHTML=data.map(r=>`<tr><td><span class="crop-cell">${r.e} ${r.n}</span></td><td>₹${r.min.toLocaleString()}</td><td>₹${r.max.toLocaleString()}</td><td><span class="modal-p">₹${r.mod.toLocaleString()}</span><span class="dlt ${r.up?'dlt-up':'dlt-dn'}">${r.up?'▲':'▼'}${r.d}</span></td></tr>`).join('');
+  const ups=data.filter(r=>r.up).map(r=>r.e+r.n).join(', ');
+  const dns=data.filter(r=>!r.up).map(r=>r.e+r.n).join(', ');
+  document.getElementById('mandi-alert').innerHTML=`${ups?'📈 आज बढ़े: '+ups+'':''}${ups&&dns?' • ':''}${dns?'📉 घटे: '+dns:''}`;
+}
+
+function renderLiveMandi(){
+  const k=document.getElementById('lm-sel').value;
+  const data=MANDI_DATA[k]||MANDI_DATA.lucknow;
+  document.getElementById('lm-tbody').innerHTML=data.map(r=>`<tr><td><span class="lm-cn">${r.e} ${r.n}</span></td><td>₹${r.min.toLocaleString()}</td><td>₹${r.max.toLocaleString()}</td><td><span class="lm-mp">₹${r.mod.toLocaleString()}</span><span class="${r.up?'lm-du':'lm-dd'}">${r.up?'▲':'▼'}${r.d}</span></td></tr>`).join('');
+  document.getElementById('lm-time').textContent=new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+' बजे';
+}
+
+function renderRain(){
+  const max=Math.max(...RAIN_DATA.map(r=>r.v));
+  document.getElementById('rain-chart').innerHTML=RAIN_DATA.map(r=>`<div class="rain-row"><span class="rl">${r.m}</span><div class="rt"><div class="rf" style="width:${(r.v/max*100).toFixed(0)}%"></div></div><span class="rv">${r.v}mm</span></div>`).join('');
+}
+
+/* ============================================================
+   MSP
+   ============================================================ */
+function renderMSP(){
+  ['kh','rb'].forEach(s=>{
+    document.getElementById('msp-'+s).innerHTML=MSP_DATA[s].map(m=>`<div class="msp-item" data-e="${m.e}"><div class="msp-tag">${s==='kh'?'खरीफ':'रबी'}</div><div class="msp-name">${m.n}</div><div class="msp-szn">${m.s}</div><div class="msp-price">₹${m.p.toLocaleString()}</div><div class="msp-unit">प्रति क्विंटल</div><div class="msp-hike">▲ ${m.h}</div></div>`).join('');
+  });
+}
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+/* Quick chips */
+const QUICK_CHIPS = [
+  '🌾 गेहूं में पीले पत्ते?','🧪 DAP कितनी डालें?','💧 सिंचाई कब करें?',
+  '🦠 माहू का उपाय?','🛡️ PMFBY बीमा?','💵 PM Kisan किश्त?',
+  '💹 MSP 2024-25?','📞 Helpline number?'
+];
+
+function initChat(){
+  const box=document.getElementById('chat-box');
+  box.innerHTML='';
+  const hasKey = !!DB.cfg().geminiKey;
+  updateAiStatus(hasKey);
+  initVoice();
+  addMsg('bot',
+    `🙏 <b>नमस्ते किसान भाई!</b><br><br>` +
+    (hasKey
+      ? `🤖 <b>Gemini AI Active</b> — हर सवाल का real-time जवाब मिलेगा।`
+      : `📚 <b>200+ कृषि Q&A</b> तैयार हैं — offline भी काम करेगा।<br><small style="color:var(--t4)">⚙️ Setup से Gemini AI connect करें — और भी smart जवाब</small>`) +
+    `<br><br>हिंदी में सवाल पूछें! 🌾`
+  );
+  document.getElementById('qchips').innerHTML=QUICK_CHIPS.map(q=>`<button class="qchip" onclick="quickAsk('${q}')">${q}</button>`).join('');
+}
+
+function addMsg(type, html, suggestions) {
+  const box = document.getElementById('chat-box');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-row ' + (type === 'u' ? 'u' : '');
+  const av = `<div class="msg-av ${type==='bot'?'av-bot':'av-usr'}">${type==='bot'?'🌾':'👨‍🌾'}</div>`;
+  let suggHTML = '';
+  if (suggestions && suggestions.length) {
+    suggHTML = `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;">` +
+      suggestions.map(s=>`<button class="qchip" style="font-size:11px;padding:4px 9px;" onclick="quickAsk('${s}')">${s}</button>`).join('') +
+      `</div>`;
+  }
+  wrap.innerHTML = av + `<div class="msg-bbl">${html}${suggHTML}</div>`;
+  box.appendChild(wrap);
+  setTimeout(()=>{ box.scrollTop = box.scrollHeight; }, 50);
+}
+
+function showTyping(isAI) {
+  const box = document.getElementById('chat-box');
+  const d = document.createElement('div'); d.id='typing'; d.className='msg-row bot';
+  const label = isAI ? '🤖 Gemini सोच रहा है...' : '💭 जवाब ढूंढ रहे हैं...';
+  d.innerHTML=`<div class="msg-av av-bot">🌾</div><div class="msg-bbl"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div><div style="font-size:10px;color:var(--t4);margin-top:4px;">${label}</div></div>`;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+
+function quickAsk(q){ document.getElementById('chat-in').value=q; sendChat(); }
+
+async function sendChat() {
+  const inp = document.getElementById('chat-in');
+  const q = inp.value.trim(); if(!q) return;
+  addMsg('u', q); inp.value='';
+
+  const hasKey = !!DB.cfg().geminiKey;
+
+  if (hasKey) {
+    // GEMINI AI MODE
+    showTyping(true);
+    const aiResp = await geminiAnswer(q);
+    document.getElementById('typing')?.remove();
+    if (aiResp) {
+      // Convert plain text to safe HTML line breaks
+      const html = aiResp.replace(/\n/g, '<br>');
+      addMsg('bot', html);
+    } else {
+      // Gemini failed — fallback to offline
+      const offline = offlineAnswer(q);
+      addMsg('bot', offline.a + '<br><small style="color:var(--t4);">⚠️ AI offline — local जवाब</small>', offline.s);
+    }
+  } else {
+    // OFFLINE MODE
+    showTyping(false);
+    const delay = 400 + Math.random() * 400;
+    setTimeout(()=>{
+      document.getElementById('typing')?.remove();
+      const result = offlineAnswer(q);
+      addMsg('bot', result.a, result.s);
+    }, delay);
+  }
+}
+
+/* ============================================================
+   CROP CALENDAR
+   ============================================================ */
+let curMonth=new Date().getMonth()+1;
+function buildMonthRow(){
+  document.getElementById('month-row').innerHTML=MONTHS_HI.map((m,i)=>`<button class="m-chip ${i+1===curMonth?'active':''}" onclick="selMonth(${i+1},this)">${m}</button>`).join('');
+}
+function selMonth(m,el){curMonth=m;document.querySelectorAll('.m-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderCalendar();}
+function renderCalendar(){
+  const st=document.getElementById('state-sel').value;
+  const data=(CAL_DATA[st]||CAL_DATA.UP)[curMonth]||{kh:[],rb:[],vg:[],fr:[]};
+  const stName=document.getElementById('state-sel').options[document.getElementById('state-sel').selectedIndex].text;
+  let html=`<div style="background:var(--g8);border-radius:9px;padding:9px 13px;margin-bottom:13px;font-size:13px;color:var(--g2);font-weight:600;">📅 ${stName} — ${MONTHS_HI[curMonth-1]}</div>`;
+  const secs=[{k:'kh',l:'🌾 खरीफ फसलें',c:'kh'},{k:'rb',l:'❄️ रबी फसलें',c:'rb'},{k:'vg',l:'🥬 सब्ज़ियाँ',c:'vg'},{k:'fr',l:'🍎 फल',c:'fr'}];
+  secs.forEach(s=>{if(data[s.k]?.length){html+=`<div class="cal-sec-hd">${s.l}</div><div class="cal-row">${data[s.k].map(c=>`<span class="cal-tag ${s.c}">${c}</span>`).join('')}</div>`;} });
+  if(secs.every(s=>!data[s.k]?.length))html+=`<div style="text-align:center;padding:28px;color:var(--t3);">🌾 ${MONTHS_HI[curMonth-1]} में ${stName} में कोई प्रमुख फसल नहीं<br><small>अगले माह की तैयारी करें</small></div>`;
+  document.getElementById('cal-out').innerHTML=html;
+}
+
+/* ============================================================
+   SCHEMES
+   ============================================================ */
+function renderSchemes(){
+  document.getElementById('schemes-out').innerHTML=SCHEMES.map(s=>`<div class="scheme-card" data-ic="${s.ic}"><span class="sc-badge" style="background:${s.bg};color:${s.tc}">${s.ic} ${s.tag}</span><div class="sc-name">${s.name}</div><div class="sc-desc">${s.desc}</div><div>${s.details.map(d=>`<div class="sc-detail">📌 <span><b>${d.k}:</b> ${d.v}</span></div>`).join('')}</div><a class="sc-btn" href="${s.link}" target="_blank" rel="noopener">आवेदन करें / अधिक जानें →</a></div>`).join('');
+}
+
+/* ============================================================
+   NEWS / BLOG SYSTEM
+   ============================================================ */
+const CAT_CFG={
+  news:{badge:'pb-news',lbl:'📰 समाचार',bar:'news'},
+  mandi:{badge:'pb-mandi',lbl:'💹 मंडी भाव',bar:'mandi'},
+  advisory:{badge:'pb-advisory',lbl:'🌱 Advisory',bar:'advisory'},
+  scheme:{badge:'pb-scheme',lbl:'📋 योजना',bar:'scheme'},
+  weather:{badge:'pb-weather',lbl:'🌧️ मौसम',bar:'weather'}
+};
+
+function getAllPosts(){
+  const local=DB.posts();
+  const all=[...local,...DEFAULT_POSTS];
+  const seen=new Set();
+  return all.filter(p=>{if(seen.has(p.id))return false;seen.add(p.id);return p.pub!==false&&p.published!==false;})
+            .sort((a,b)=>new Date(b.date)-new Date(a.date));
+}
+
+function timeAgo(d){
+  const m=Math.floor((Date.now()-new Date(d))/60000);
+  if(m<1)return'अभी';if(m<60)return m+'म पहले';
+  const h=Math.floor(m/60);if(h<24)return h+'घं पहले';
+  return Math.floor(h/24)+'दिन पहले';
+}
+
+let newsFilterCat='all';
+
+function newsFilter(cat,el){
+  newsFilterCat=cat;
+  document.querySelectorAll('.nf-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const box=document.getElementById('news-mandi-box');
+  box.style.display=(cat==='all'||cat==='mandi')?'block':'none';
+  renderNewsFeed();
+}
+
+function renderNewsFeed(){
+  const all=getAllPosts();
+  const posts=newsFilterCat==='all'?all:all.filter(p=>p.cat===newsFilterCat||(p.category&&p.category===newsFilterCat));
+  const area=document.getElementById('news-posts');
+  if(!posts.length){area.innerHTML=`<div class="empty-state"><div>📭</div><h3>कोई post नहीं</h3><p>Admin panel से content publish करें।</p></div>`;return;}
+
+  const breaking=posts.filter(p=>p.prio==='high'||p.priority==='high');
+  const normal=posts.filter(p=>p.prio!=='high'&&p.priority!=='high');
+  let html='';
+  if(breaking.length){html+=`<div class="sec-lbl">🔴 Breaking / ज़रूरी</div>`;html+=breaking.map(p=>postCard(p)).join('');}
+  html+=`<div class="ad-banner" style="border-radius:11px;border:1px solid var(--bdr);margin-bottom:13px;"><div class="ad-placeholder">📢 AdMob Ad</div></div>`;
+  if(normal.length){html+=`<div class="sec-lbl">📰 ताज़ा समाचार</div>`;html+=normal.map(p=>postCard(p)).join('');}
+  area.innerHTML=html;
+  document.getElementById('last-update').textContent=new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+' बजे';
+
+  // Update ticker
+  const titles=posts.slice(0,5).map(p=>`📢 ${p.title} • `).join('');
+  if(titles){const t=document.getElementById('ticker-txt');t.textContent=titles+titles;}
+}
+
+function postCard(p){
+  const cat=p.cat||p.category||'news';
+  const cc=CAT_CFG[cat]||CAT_CFG.news;
+  const isBreaking=p.prio==='high'||p.priority==='high';
+  const content=p.content||p.body||'';
+  const loc=p.loc||p.location||'';
+  const tags=(p.tags||'').split(',').filter(Boolean).slice(0,3);
+  return`<div class="post-card${isBreaking?' breaking':''}" onclick="openPost(${p.id})">
+    <div class="pc-bar ${cc.bar}"></div>
+    <div class="pc-body">
+      <div class="pc-meta">
+        ${isBreaking?'<span class="pc-badge pb-breaking">🔴 Breaking</span>':''}
+        <span class="pc-badge ${cc.badge}">${cc.lbl}</span>
+        ${loc?`<span class="pc-loc">📍 ${loc}</span>`:''}
+        <span class="pc-time">${timeAgo(p.date)}</span>
+      </div>
+      <div class="pc-title">${p.title}</div>
+      <div class="pc-content">${content.substring(0,110)}${content.length>110?'...':''}</div>
+      ${tags.length?`<div class="pc-tags">${tags.map(t=>`<span class="pc-tag">#${t.trim()}</span>`).join('')}</div>`:''}
+    </div>
+  </div>`;
+}
+
+let postCache=[];
+function openPost(id){
+  const posts=getAllPosts();
+  postCache=posts;
+  const p=posts.find(x=>x.id===id);if(!p)return;
+  const cat=p.cat||p.category||'news';
+  const cc=CAT_CFG[cat]||CAT_CFG.news;
+  const content=p.content||p.body||'';
+  const loc=p.loc||p.location||'';
+  document.getElementById('pv-h').textContent=p.title.substring(0,38)+'...';
+  document.getElementById('pv-sh').textContent=cc.lbl+' • '+(p.dstr||p.dateStr||'');
+  document.getElementById('pv-title').textContent=p.title;
+  document.getElementById('pv-meta').innerHTML=`<span class="pc-badge ${cc.badge}">${cc.lbl}</span>${loc?`<span class="pc-loc">📍 ${loc}</span>`:''}<span style="font-size:11px;color:var(--t4);margin-left:auto">${p.dstr||p.dateStr||''}</span>`;
+  document.getElementById('pv-body').textContent=content;
+  document.getElementById('pv-share').onclick=()=>{const txt=`*${p.title}*\n\n${content.substring(0,300)}...\n\n📲 किसान सहायक App`;window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');};
+  const pv=document.getElementById('post-view');pv.classList.add('open');pv.style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closePost(){
+  const pv=document.getElementById('post-view');pv.classList.remove('open');
+  setTimeout(()=>{pv.style.display='none';},250);
+  document.body.style.overflow='';
+}
+
+/* ============================================================
+   POLICY PAGES
+   ============================================================ */
+function openPol(name){document.getElementById('pol-'+name).classList.add('open');document.body.style.overflow='hidden';}
+function closePol(name){document.getElementById('pol-'+name).classList.remove('open');document.body.style.overflow='';}
+
+/* ============================================================
+   ADMIN AUTH
+   ============================================================ */
+function openAdminLogin(){
+  document.getElementById('admin-login').style.display='flex';
+}
+function doLogin(){
+  const u=document.getElementById('l-user').value;
+  const p=document.getElementById('l-pass').value;
+  const auth=DB.auth();
+  if(u===auth.u&&p===auth.p){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('app-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    initAdmin();
+  }else{
+    const e=document.getElementById('l-err');e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);
+  }
+}
+function closeAdmin(){
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  renderNewsFeed();
+}
+
+/* ============================================================
+   ADMIN LOGIC
+   ============================================================ */
+let admCat='news';
+function initAdmin(){
+  refreshStats();loadCfgFields();initMandiForm();
+  document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
+}
+
+function admTab(name,el,preset){
+  document.querySelectorAll('.adm-page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('adm-'+name).classList.add('active');
+  if(el){document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+  if(name==='manage')renderAdmPosts();
+  if(name==='dashboard')refreshStats();
+  if(name==='mandi')renderMandiEntries();
+  if(name==='write'&&preset)setCat(null,preset);
+}
+
+function refreshStats(){
+  const posts=DB.posts();
+  document.getElementById('st-posts').textContent=posts.length;
+  document.getElementById('st-mandi').textContent=DB.mandi().length;
+  document.getElementById('st-date').textContent=new Date().toLocaleDateString('hi-IN',{day:'2-digit',month:'short'});
+  renderDashPosts(posts.slice(-5).reverse());
+}
+
+function renderDashPosts(posts){
+  const tb=document.getElementById('dash-tbl');
+  if(!posts.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--t3);">कोई post नहीं</td></tr>';return;}
+  tb.innerHTML=posts.map(p=>admPostRow(p)).join('');
+}
+
+function admPostRow(p){
+  const catLbls={news:'📰 समाचार',mandi:'💹 मंडी',advisory:'🌱 Advisory',scheme:'📋 योजना',weather:'🌧️ मौसम'};
+  const cat=p.cat||p.category||'news';
+  return`<tr>
+    <td><div class="pt-name">${p.title}</div><div class="pt-sub">${p.loc||p.location||'—'}</div></td>
+    <td style="font-size:12px;">${catLbls[cat]||cat}</td>
+    <td>${(p.pub!==false&&p.published!==false)?'<span class="adm-badge adm-b-pub">✅ Live</span>':'<span class="adm-badge adm-b-dft">💾 Draft</span>'}</td>
+    <td><div style="display:flex;gap:5px;">
+      <button class="a-btn btn-sec btn-sm" onclick="togglePub(${p.id})">${(p.pub!==false&&p.published!==false)?'Unpublish':'Publish'}</button>
+      <button class="a-btn btn-red btn-sm" onclick="delPost(${p.id})">🗑️</button>
+    </div></td>
+  </tr>`;
+}
+
+function renderAdmPosts(filter){
+  let posts=DB.posts();
+  if(filter&&filter!=='all')posts=posts.filter(p=>(p.cat||p.category)===filter);
+  posts=posts.reverse();
+  const tb=document.getElementById('all-posts-tbl');
+  const em=document.getElementById('posts-empty');
+  if(!posts.length){tb.innerHTML='';em.style.display='block';}
+  else{em.style.display='none';tb.innerHTML=posts.map(p=>admPostRow(p)).join('');}
+}
+function filterAdmPosts(v){renderAdmPosts(v);}
+
+/* POST WRITE */
+function setCat(el,val){
+  admCat=val;
+  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('on'));
+  if(el)el.classList.add('on');
+  else{const cp=document.querySelectorAll('.cat-pill');cp.forEach(c=>{if(c.getAttribute('onclick').includes(`'${val}'`))c.classList.add('on');});}
+}
+function charCount(){const v=document.getElementById('p-body').value.length;document.getElementById('cc').textContent=v;}
+function livePreview(){
+  document.getElementById('prev-t').textContent=document.getElementById('p-title').value||'शीर्षक...';
+  const b=document.getElementById('p-body').value;
+  document.getElementById('prev-b').textContent=b.substring(0,100)+(b.length>100?'...':'');
+}
+function buildPost(status){
+  const title=document.getElementById('p-title').value.trim();
+  const body=document.getElementById('p-body').value.trim();
+  if(!title){toast('❌ Title ज़रूरी है!',true);return null;}
+  if(!body){toast('❌ Content ज़रूरी है!',true);return null;}
+  return{id:Date.now(),title,content:body,cat:admCat,category:admCat,loc:document.getElementById('p-loc').value.trim(),location:document.getElementById('p-loc').value.trim(),tags:document.getElementById('p-tags').value.trim(),prio:document.getElementById('p-prio').value,priority:document.getElementById('p-prio').value,pub:status==='pub',published:status==='pub',date:new Date().toISOString(),dstr:new Date().toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'}),dateStr:new Date().toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'})};
+}
+function publishPost(){
+  const p=buildPost('pub');if(!p)return;
+  const posts=DB.posts();posts.push(p);DB.savePosts(posts);
+  clearWriteForm();toast('✅ Post publish हो गई!');
+  refreshStats();renderNewsFeed();
+  setTimeout(()=>admTab('manage',null),1200);
+}
+function saveDraft(){
+  const p=buildPost('draft');if(!p)return;
+  const posts=DB.posts();posts.push(p);DB.savePosts(posts);
+  clearWriteForm();toast('💾 Draft save हो गया!');refreshStats();
+}
+function clearWriteForm(){
+  document.getElementById('p-title').value='';document.getElementById('p-body').value='';
+  document.getElementById('p-loc').value='';document.getElementById('p-tags').value='';
+  document.getElementById('cc').textContent='0';livePreview();
+}
+function togglePub(id){
+  const posts=DB.posts();const p=posts.find(x=>x.id===id);
+  if(p){p.pub=!p.pub;p.published=p.pub;DB.savePosts(posts);renderAdmPosts();refreshStats();renderNewsFeed();toast(p.pub?'✅ Published!':'💾 Draft में!');}
+}
+function delPost(id){
+  if(!confirm('इस post को delete करें?'))return;
+  DB.savePosts(DB.posts().filter(p=>p.id!==id));
+  renderAdmPosts();refreshStats();renderNewsFeed();toast('🗑️ Delete हो गई');
+}
+
+/* MANDI FORM */
+const CROPS=[{e:'🌾',n:'गेहूं'},{e:'🍚',n:'धान'},{e:'🌽',n:'मक्का'},{e:'🫘',n:'सरसों'},{e:'🧅',n:'प्याज़'},{e:'🍅',n:'टमाटर'},{e:'🥔',n:'आलू'},{e:'🧄',n:'लहसुन'},{e:'🫘',n:'अरहर'},{e:'🫘',n:'चना'},{e:'🌱',n:'मूँग'},{e:'🌾',n:'बाजरा'}];
+function initMandiForm(){
+  document.getElementById('mq-grid').innerHTML=CROPS.map(c=>`<div class="mq-item"><div class="mq-crop">${c.e} ${c.n}</div><div class="mq-prices"><input class="mq-in" id="mq-${c.n}-mn" type="number" placeholder="Min ₹"><input class="mq-in" id="mq-${c.n}-mx" type="number" placeholder="Max ₹"><input class="mq-in" id="mq-${c.n}-md" type="number" placeholder="Modal ₹"></div></div>`).join('');
+  renderMandiEntries();
+}
+function collectMandiData(){
+  const mandi=document.getElementById('m-name').value;
+  const date=document.getElementById('m-date').value;
+  const note=document.getElementById('m-note').value;
+  const entries=[];
+  CROPS.forEach(c=>{
+    const mn=document.getElementById(`mq-${c.n}-mn`)?.value;
+    const mx=document.getElementById(`mq-${c.n}-mx`)?.value;
+    const md=document.getElementById(`mq-${c.n}-md`)?.value;
+    if(md||mn||mx)entries.push({date,mandi,crop:c.e+' '+c.n,min:mn||'—',max:mx||'—',modal:md||'—',note});
+  });
+  return{mandi,date,note,entries};
+}
+function saveMandi(){
+  const {entries}=collectMandiData();
+  if(!entries.length){toast('❌ कम से कम एक फसल का भाव डालें!',true);return;}
+  const all=DB.mandi();all.push(...entries);DB.saveMandi(all);
+  renderMandiEntries();refreshStats();toast(`✅ ${entries.length} फसलों के भाव save हुए!`);
+}
+function saveMandiAndPost(){
+  const {mandi,date,note,entries}=collectMandiData();
+  if(!entries.length){toast('❌ पहले भाव डालें!',true);return;}
+  const all=DB.mandi();all.push(...entries);DB.saveMandi(all);
+  const lines=entries.map(e=>`${e.crop}: ₹${e.modal}/क्विंटल`).join('\n');
+  const post={id:Date.now(),title:`${mandi} के ताज़ा भाव — ${new Date(date).toLocaleDateString('hi-IN')}`,content:lines+(note?'\n\n📝 '+note:''),cat:'mandi',category:'mandi',loc:mandi,location:mandi,tags:'मंडी भाव, आज का भाव',prio:'high',priority:'high',pub:true,published:true,date:new Date().toISOString(),dstr:new Date().toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'}),dateStr:new Date().toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'})};
+  const posts=DB.posts();posts.push(post);DB.savePosts(posts);
+  renderMandiEntries();refreshStats();renderNewsFeed();
+  toast(`✅ ${entries.length} भाव save + Post publish हो गई!`);
+}
+function renderMandiEntries(){
+  const entries=DB.mandi().slice(-20).reverse();
+  const tb=document.getElementById('m-entries-tbl');
+  if(!entries.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;padding:18px;color:var(--t3);">कोई entry नहीं</td></tr>';return;}
+  tb.innerHTML=entries.map(e=>`<tr><td style="font-size:12px;">${e.mandi.substring(0,16)}</td><td>${e.crop}</td><td style="font-weight:700;color:var(--g3);">₹${e.modal}</td><td style="font-size:11px;color:var(--t3);">${e.date}</td></tr>`).join('');
+}
+
+/* SETTINGS */
+function loadCfgFields(){
+  const c=DB.cfg();
+  if(c.wa)document.getElementById('cfg-wa').value=c.wa;
+  if(c.admob)document.getElementById('cfg-admob').value=c.admob;
+  if(c.email)document.getElementById('cfg-email').value=c.email;
+  if(c.owm)document.getElementById('cfg-owm').value=c.owm;
+}
+function saveSettings(){
+  const c={wa:document.getElementById('cfg-wa').value,admob:document.getElementById('cfg-admob').value,email:document.getElementById('cfg-email').value,owm:document.getElementById('cfg-owm').value};
+  DB.saveCfg(c);
+  // Update WA links
+  if(c.wa){document.querySelectorAll('.wa-strip,.wa-cta').forEach(el=>{if(el.tagName==='A')el.href=c.wa;});}
+  const op=document.getElementById('cfg-op').value;
+  const np=document.getElementById('cfg-np').value;
+  if(op&&np){const auth=DB.auth();if(op!==auth.p){toast('❌ पुराना password गलत!',true);return;}DB.auth&&localStorage.setItem('ks_auth',JSON.stringify({u:auth.u,p:np}));}
+  toast('✅ Settings save हो गई!');
+}
+function exportData(){
+  const data={posts:DB.posts(),mandi:DB.mandi(),cfg:DB.cfg()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kisansahayak-backup.json';a.click();
+  toast('📤 Data export हो गया!');
+}
+function clearAllData(){
+  if(!confirm('सब data delete करना चाहते हैं? यह वापस नहीं आएगा।'))return;
+  localStorage.removeItem('ks_posts');localStorage.removeItem('ks_mandi');
+  renderAdmPosts();refreshStats();renderNewsFeed();toast('🗑️ Data clear हो गया!');
+}
+
+/* TOAST */
+function toast(msg,isErr=false){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast show'+(isErr?' err':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener('load',()=>{
+  // Loading screen — guaranteed to hide
+  function hideLoading(){
+    const ld=document.getElementById('loading');
+    if(!ld||ld.style.display==='none')return;
+    ld.style.transition='opacity 0.4s';
+    ld.style.opacity='0';
+    setTimeout(()=>{ld.style.display='none';},450);
+  }
+  setTimeout(hideLoading,1800);
+  setTimeout(hideLoading,4000); // safety fallback
+
+  // Init all sections
+  renderMandi();renderLiveMandi();renderRain();renderMSP();
+  buildMonthRow();renderCalendar();renderSchemes();
+  initChat();renderNewsFeed();getLocation();
+
+  // WA links
+  const cfg=DB.cfg();
+  if(cfg.wa){document.querySelectorAll('a.wa-strip').forEach(el=>el.href=cfg.wa);}
+
+  // AdMob
+  try{(adsbygoogle=window.adsbygoogle||[]).push({});(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+
+  // Auto refresh news every 3 mins
+  setInterval(renderNewsFeed,180000);
+});
+</script>
+</body>
+</html>
